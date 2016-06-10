@@ -1,6 +1,5 @@
 package list;
 
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -31,6 +30,8 @@ public class MainViewController
         this.service = service;
 
         episodeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
+
+        tagsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         entriesList.getItems().addAll(service.getEntries());
         entriesList.getSelectionModel().selectFirst();
@@ -89,7 +90,7 @@ public class MainViewController
     {
         try
         {
-            entriesList.getSelectionModel().getSelectedItem().setEpisodeCounter(Integer.parseInt(episodeSpinner.getEditor().getText()));
+            entriesList.getSelectionModel().getSelectedItem().setSeriesEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
         }
         catch (NumberFormatException e)
         {
@@ -116,8 +117,8 @@ public class MainViewController
 
         if(editedListEntry != null)
         {
-            entriesList.getSelectionModel().getSelectedItem().setName(editedListEntry.getName());
-            entriesList.getSelectionModel().getSelectedItem().setEpisodeCounter(editedListEntry.getEpisodeNumber());
+            entriesList.getSelectionModel().getSelectedItem().setSeriesTitle(editedListEntry.getSeriesTitle());
+            entriesList.getSelectionModel().getSelectedItem().setSeriesEpisodes(editedListEntry.getEpisodeNumber());
             entriesList.getSelectionModel().getSelectedItem().setWebsite(editedListEntry.getWebsite());
             entriesList.getSelectionModel().getSelectedItem().setTags(editedListEntry.getTags());
             entriesList.getSelectionModel().getSelectedItem().setDescription(editedListEntry.getDescription());
@@ -132,7 +133,7 @@ public class MainViewController
     private void deleteEntry()
     {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Deleting " + entriesList.getSelectionModel().getSelectedItem().getName() + " from list");
+        alert.setHeaderText("Deleting " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle() + " from list");
         alert.setContentText("Are you sure?");
         alert.setTitle("Confirm");
         alert.showAndWait();

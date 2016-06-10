@@ -3,45 +3,68 @@ package list.logIn;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import list.DataService;
+import list.Main;
+import list.MainViewController;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.TextNode;
+
+import java.io.IOException;
 
 /**
  * Created by Maciej on 2016-05-07.
  */
 public class LogInController
 {
-    DataService service;
     Stage stage;
-    Scene sceneToSet;
 
     @FXML
-    PasswordField passwordField;
+    TextField usernameField;
+    @FXML
+    PasswordField passwordField, userPasswordField;
     @FXML
     Label errorLabel;
 
-    public void init(DataService service, Stage stage, Scene sceneToSet)
+    public void init(Stage stage)
     {
-        this.service = service;
         this.stage = stage;
-        this.sceneToSet = sceneToSet;
     }
 
+    /**
+     * Invoked every time, when user press a key in usernameField or userPasswordField
+     */
     @FXML
     private void tryToLogIn(KeyEvent event)
     {
-        if (event.getCode() == KeyCode.ENTER)
+        if(event.getCode() == KeyCode.ENTER)
         {
-            if (service.checkPassword(passwordField.getText()))
+            try
             {
-                stage.setScene(sceneToSet);
+                String userCredentials = usernameField.getText() + ":" + userPasswordField.getText();
+                String encodedLogin = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+
+                Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
+
+                DataService service = new DataService(encodedLogin);
+                stage.setOnCloseRequest(e -> service.save());
+
+                FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
+                Parent mainView = loader.load();
+                loader.<MainViewController>getController().init(service);
+                stage.setScene(new Scene(mainView, Main.PREFERRED_WIDTH, Main.PREFERRED_HEIGHT));
             }
-            else
+            catch (IOException e)
             {
                 errorLabel.setVisible(true);
             }
