@@ -1,277 +1,248 @@
 package list;
 
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class ListEntry implements Serializable
+public class ListEntry extends Entry implements Serializable
 {
-    private int seriesDataBaseID;
-    private String seriesTitle;
-    private String[] seriesSynonyms;
-    private short seriesType;
-    private int seriesEpisodes;
-    private short seriesStatus;
-    private String seriesStart;
-    private String seriesEnd;
-    private Image seriesImage;
-    private int myID;
-    private int myWatchedEpisodes;
-    private String myStartDate;
-    private String myFinishDate;
-    private short myScore;
-    private short myStatus; //1/watching, 2/completed, 3/onhold, 4/dropped, 6/plantowatch
-    private int myRewatching;
-    private int myRewatchingEpisode;
-    private String myLastUpdated;
+	Element entry;
 
-    private String description, myTags;
+	private int seriesDataBaseID;
+	private String seriesTitle;
+	private String[] seriesSynonyms;
+	private short seriesType;
+	private int seriesEpisodes;
+	private short seriesStatus;
+	private String seriesStart;
+	private String seriesEnd;
+	private Image seriesImage;
+	private int myID;
+	private int myWatchedEpisodes;
+	private String myStartDate;
+	private String myFinishDate;
+	private short myScore;
+	private MyStatusEnum myStatus; //1/watching, 2/completed, 3/onhold, 4/dropped, 6/plantowatch
+	private int myRewatching;
+	private int myRewatchingEpisode;
+	private String myLastUpdated;
+	private String myTags;
 
-    private URL website;
+	private URL website; //Custom or MAL website (depends on user settings)
 
-    public ListEntry()
-    {
+	public ListEntry(Element entry)
+	{
+		this.entry = entry;
 
-    }
+		initFields(null);
+	}
 
-    @Override
-    public String toString()
-    {
-        return seriesTitle;
-    }
+	public ListEntry(Element entry, String customWebsite)
+	{
+		this.entry = entry;
 
-    public void setSeriesImage(String imageURL)
-    {
-        seriesImage = new Image(imageURL);
-    }
+		initFields(customWebsite);
+	}
 
-    public Image getSeriesImage()
-    {
-        return seriesImage;
-    }
+	private String getStringFromElement(String elementTag)
+	{
+		TextNode node = (TextNode) entry.getElementsByTag(elementTag).first().childNode(0);
+		return node.getWholeText();
+	}
 
-    public String[] getSeriesSynonyms()
-    {
-        return seriesSynonyms;
-    }
+	private void initFields(String websiteURL)
+	{
+		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));
+		seriesTitle = getStringFromElement("series_title");
+		seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
+		seriesType = Short.parseShort(getStringFromElement("series_type"));
+		seriesEpisodes = Integer.parseInt(getStringFromElement("series_episodes"));
+		seriesStatus = Short.parseShort(getStringFromElement("series_status"));
+		seriesStart = getStringFromElement("series_start");
+		seriesEnd = getStringFromElement("series_end");
+		seriesImage = new Image(getStringFromElement("series_image"));
+		myID = Integer.parseInt(getStringFromElement("my_id"));
+		myWatchedEpisodes = Integer.parseInt(getStringFromElement("my_watched_episodes"));
+		myStartDate = getStringFromElement("my_start_date");
+		myFinishDate = getStringFromElement("my_finish_date");
+		myScore = Short.parseShort(getStringFromElement("my_score"));
+		myStatus = MyStatusEnum.getMyStatusEnum(getStringFromElement("my_status"));
+		myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
+		myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
+		myLastUpdated = getStringFromElement("my_last_updated");
 
-    /**
-     * Parses String with synonyms that have been divided by semicolon
-     *
-     * @param seriesSynonyms String to parse
-     */
-    public void setSeriesSynonyms(String seriesSynonyms)
-    {
-        ArrayList<String> synonymsArray = new ArrayList<>(5); //Usually entries doesn't have more than 5 synonyms
+		try
+		{
+			myTags = getStringFromElement("my_tags");
+		}
+		catch (IndexOutOfBoundsException e)
+		{
+			myTags = "";
+		}
 
-        StringBuilder seriesSynonymBuilder = new StringBuilder();
-        for(char c : seriesSynonyms.toCharArray())
-        {
-            if (c != ';')
-            {
-                seriesSynonymBuilder.append(c);
-            }
-            else
-            {
-                synonymsArray.add(seriesSynonymBuilder.toString());
-                seriesSynonymBuilder = new StringBuilder();
-            }
-        }
+		try
+		{
+			if (websiteURL != null)
+			{
+				website = new URL(websiteURL);
+			}
+			else
+			{
+				website = new URL("http://myanimelist.net/anime/" + seriesDataBaseID + "/");
+			}
+		}
+		catch (MalformedURLException e)
+		{
+			e.printStackTrace();
 
-        this.seriesSynonyms = (String[]) synonymsArray.toArray();
-    }
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setHeaderText(null);
+			alert.setContentText("Bad website address");
+			alert.showAndWait();
+		}
+	}
 
-    //===========================
-    // PLAIN GETTERS AND SETTERS
-    //===========================
-    public int getSeriesDataBaseID()
-    {
-        return seriesDataBaseID;
-    }
 
-    public void setSeriesDataBaseID(int seriesDataBaseID)
-    {
-        this.seriesDataBaseID = seriesDataBaseID;
-    }
+	@Override
+	public String toString()
+	{
+		return seriesTitle;
+	}
 
-    public String getSeriesTitle()
-    {
-        return seriesTitle;
-    }
+	private String[] parseSynonyms(String synonyms)
+	{
+		ArrayList<String> synonymsArray = new ArrayList<>(5); //Usually entries doesn't have more than 5 synonyms
 
-    public void setSeriesTitle(String seriesTitle)
-    {
-        this.seriesTitle = seriesTitle;
-    }
+		StringBuilder seriesSynonymBuilder = new StringBuilder();
+		for (char c : synonyms.toCharArray())
+		{
+			if (c != ';')
+			{
+				seriesSynonymBuilder.append(c);
+			}
+			else
+			{
+				synonymsArray.add(seriesSynonymBuilder.toString());
+				seriesSynonymBuilder = new StringBuilder();
+			}
+		}
 
-    public short getSeriesType()
-    {
-        return seriesType;
-    }
+		return synonymsArray.toArray(new String[synonymsArray.size()]);
+	}
 
-    public void setSeriesType(short seriesType)
-    {
-        this.seriesType = seriesType;
-    }
+	//====================
+	//GETTERS AND SETTERS
+	//====================
 
-    public int getSeriesEpisodes()
-    {
-        return seriesEpisodes;
-    }
 
-    public void setSeriesEpisodes(int seriesEpisodes)
-    {
-        this.seriesEpisodes = seriesEpisodes;
-    }
+	public int getSeriesDataBaseID()
+	{
+		return seriesDataBaseID;
+	}
 
-    public short getSeriesStatus()
-    {
-        return seriesStatus;
-    }
+	public String getSeriesTitle()
+	{
+		return seriesTitle;
+	}
 
-    public void setSeriesStatus(short seriesStatus)
-    {
-        this.seriesStatus = seriesStatus;
-    }
+	public String[] getSeriesSynonyms()
+	{
+		return seriesSynonyms;
+	}
 
-    public String getSeriesStart()
-    {
-        return seriesStart;
-    }
+	public short getSeriesType()
+	{
+		return seriesType;
+	}
 
-    public void setSeriesStart(String seriesStart)
-    {
-        this.seriesStart = seriesStart;
-    }
+	public int getSeriesEpisodes()
+	{
+		return seriesEpisodes;
+	}
 
-    public String getSeriesEnd()
-    {
-        return seriesEnd;
-    }
+	public void setSeriesEpisodes(int seriesEpisodes)
+	{
+		this.seriesEpisodes = seriesEpisodes;
+	}
 
-    public void setSeriesEnd(String seriesEnd)
-    {
-        this.seriesEnd = seriesEnd;
-    }
+	public short getSeriesStatus()
+	{
+		return seriesStatus;
+	}
 
-    public int getMyID()
-    {
-        return myID;
-    }
+	public String getSeriesStart()
+	{
+		return seriesStart;
+	}
 
-    public void setMyID(int myID)
-    {
-        this.myID = myID;
-    }
+	public String getSeriesEnd()
+	{
+		return seriesEnd;
+	}
 
-    public int getMyWatchedEpisodes()
-    {
-        return myWatchedEpisodes;
-    }
+	public Image getSeriesImage()
+	{
+		return seriesImage;
+	}
 
-    public void setMyWatchedEpisodes(int myWatchedEpisodes)
-    {
-        this.myWatchedEpisodes = myWatchedEpisodes;
-    }
+	public int getMyID()
+	{
+		return myID;
+	}
 
-    public String getMyStartDate()
-    {
-        return myStartDate;
-    }
+	public int getMyWatchedEpisodes()
+	{
+		return myWatchedEpisodes;
+	}
 
-    public void setMyStartDate(String myStartDate)
-    {
-        this.myStartDate = myStartDate;
-    }
+	public String getMyStartDate()
+	{
+		return myStartDate;
+	}
 
-    public String getMyFinishDate()
-    {
-        return myFinishDate;
-    }
+	public String getMyFinishDate()
+	{
+		return myFinishDate;
+	}
 
-    public void setMyFinishDate(String myFinishDate)
-    {
-        this.myFinishDate = myFinishDate;
-    }
+	public short getMyScore()
+	{
+		return myScore;
+	}
 
-    public short getMyScore()
-    {
-        return myScore;
-    }
+	public MyStatusEnum getMyStatus()
+	{
+		return myStatus;
+	}
 
-    public void setMyScore(short myScore)
-    {
-        this.myScore = myScore;
-    }
+	public int getMyRewatching()
+	{
+		return myRewatching;
+	}
 
-    public short getMyStatus()
-    {
-        return myStatus;
-    }
+	public int getMyRewatchingEpisode()
+	{
+		return myRewatchingEpisode;
+	}
 
-    public void setMyStatus(short myStatus)
-    {
-        this.myStatus = myStatus;
-    }
+	public String getMyLastUpdated()
+	{
+		return myLastUpdated;
+	}
 
-    public int getMyRewatching()
-    {
-        return myRewatching;
-    }
+	public String getMyTags()
+	{
+		return myTags;
+	}
 
-    public void setMyRewatching(int myRewatching)
-    {
-        this.myRewatching = myRewatching;
-    }
-
-    public int getMyRewatchingEpisode()
-    {
-        return myRewatchingEpisode;
-    }
-
-    public void setMyRewatchingEpisode(int myRewatchingEpisode)
-    {
-        this.myRewatchingEpisode = myRewatchingEpisode;
-    }
-
-    public String getMyLastUpdated()
-    {
-        return myLastUpdated;
-    }
-
-    public void setMyLastUpdated(String myLastUpdated)
-    {
-        this.myLastUpdated = myLastUpdated;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-    public String getMyTags()
-    {
-        return myTags;
-    }
-
-    public void setMyTags(String myTags)
-    {
-        this.myTags = myTags;
-    }
-
-    public URL getWebsite()
-    {
-        return website;
-    }
-
-    public void setWebsite(URL website)
-    {
-        this.website = website;
-    }
+	public URL getWebsite()
+	{
+		return website;
+	}
 }
