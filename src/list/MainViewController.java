@@ -65,6 +65,12 @@ public class MainViewController
 	}
 
 	@FXML
+	private void updateEntryRemotely()
+	{
+		service.updateEntryToMAL(entriesList.getSelectionModel().getSelectedItem());
+	}
+
+	@FXML
 	private void openWebsite()
 	{
 		try

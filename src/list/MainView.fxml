@@ -90,6 +90,18 @@
                         <Insets />
                      </GridPane.margin>
                   </ChoiceBox>
+                  <StackPane alignment="TOP_CENTER" layoutX="237.0" layoutY="522.0" GridPane.rowIndex="3">
+                     <children>
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#updateEntryRemotely" prefHeight="50.0" prefWidth="108.0" text="Update">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <StackPane.margin>
+                              <Insets top="20.0" />
+                           </StackPane.margin>
+                        </Button>
+                     </children>
+                  </StackPane>
                       
                   </children>
               </GridPane>

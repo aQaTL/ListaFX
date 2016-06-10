@@ -1,21 +1,12 @@
 package list;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * TODO write some javadoc here
@@ -123,8 +114,27 @@ public class DataService
 		}
 	}
 
-	public void updateEntryToMAL()
+	public void updateEntryToMAL(ListEntry entry)
 	{
 		//TODO Implement this method
+		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
+
+		StringBuilder entryBuilder = new StringBuilder();
+		entryBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		entryBuilder.append("<entry>");
+		entryBuilder.append("<episode>" + entry.getMyWatchedEpisodes() + "</episode>");
+		entryBuilder.append("<status>" + entry.getMyStatus().getStatusNumber() + "</status>");
+		entryBuilder.append("<score>" + entry.getMyScore() + "</score>");
+		entryBuilder.append("</entry>");
+
+		try
+		{
+			Document response = Jsoup.connect(address).data("data", entryBuilder.toString()).header("Authorization", encodedLogin).post();
+			System.out.println(response.toString()); //TODO test it
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
