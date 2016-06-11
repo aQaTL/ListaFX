@@ -122,7 +122,6 @@ public class DataService
 	 */
 	public boolean updateEntryToMAL(ListEntry entry)
 	{
-		//TODO Implement this method
 		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
 
 		StringBuilder entryBuilder = new StringBuilder();
@@ -130,7 +129,7 @@ public class DataService
 		entryBuilder.append("<entry>");
 		entryBuilder.append("<episode>" + entry.getMyWatchedEpisodes() + "</episode>");
 		entryBuilder.append("<status>" + entry.getMyStatus().getStatusNumber() + "</status>");
-		entryBuilder.append("<score>" + entry.getMyScore() + "</score>");
+		entryBuilder.append("<score>" + entry.getMyScore().getScore() + "</score>");
 		entryBuilder.append("</entry>");
 		System.out.println(entryBuilder.toString());
 		try

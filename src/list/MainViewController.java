@@ -25,7 +25,7 @@ public class MainViewController
 	@FXML
 	private Label seriesTitleLabel;
 	@FXML
-	private ChoiceBox<String> myScoreBox;
+	private ChoiceBox<MyScoreEnum> myScoreBox;
 	@FXML
 	private Label progressLabel;
 	@FXML
@@ -42,6 +42,7 @@ public class MainViewController
 		this.service = service;
 
 		episodeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
+		myScoreBox.getItems().addAll(MyScoreEnum.values());
 		mySeriesStatusBox.getItems().addAll(MyStatusEnum.values());
 
 		entriesList.getItems().addAll(service.getEntries());
@@ -70,6 +71,7 @@ public class MainViewController
 		ListEntry entryToUpdate = entriesList.getSelectionModel().getSelectedItem();
 		entryToUpdate.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
 		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
+		entryToUpdate.setMyScore(myScoreBox.getSelectionModel().getSelectedItem());
 
 		if(service.updateEntryToMAL(entryToUpdate))
 		{

@@ -26,7 +26,7 @@ public class ListEntry extends Entry
 	private int myWatchedEpisodes;
 	private String myStartDate;
 	private String myFinishDate;
-	private short myScore;
+	private MyScoreEnum myScore;
 	private MyStatusEnum myStatus; //1/watching, 2/completed, 3/onhold, 4/dropped, 6/plantowatch
 	private int myRewatching;
 	private int myRewatchingEpisode;
@@ -70,7 +70,7 @@ public class ListEntry extends Entry
 		myWatchedEpisodes = Integer.parseInt(getStringFromElement("my_watched_episodes"));
 		myStartDate = getStringFromElement("my_start_date");
 		myFinishDate = getStringFromElement("my_finish_date");
-		myScore = Short.parseShort(getStringFromElement("my_score"));
+		myScore = MyScoreEnum.getMyScoreEnum(getStringFromElement("my_score"));
 		myStatus = MyStatusEnum.getMyStatusEnum(getStringFromElement("my_status"));
 		myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
 		myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
@@ -215,9 +215,14 @@ public class ListEntry extends Entry
 		return myFinishDate;
 	}
 
-	public short getMyScore()
+	public MyScoreEnum getMyScore()
 	{
 		return myScore;
+	}
+
+	public void setMyScore(MyScoreEnum myScore)
+	{
+		this.myScore = myScore;
 	}
 
 	public MyStatusEnum getMyStatus()
