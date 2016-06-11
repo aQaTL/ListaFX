@@ -38,8 +38,8 @@ public enum MyStatusEnum
 		}
 	}
 
-	MyStatusEnum(int status)
+	MyStatusEnum(int statusNumber)
 	{
-		this.statusNumber = status;
+		this.statusNumber = statusNumber;
 	}
 }

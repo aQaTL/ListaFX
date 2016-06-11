@@ -67,7 +67,18 @@ public class MainViewController
 	@FXML
 	private void updateEntryRemotely()
 	{
-		service.updateEntryToMAL(entriesList.getSelectionModel().getSelectedItem());
+		ListEntry entryToUpdate = entriesList.getSelectionModel().getSelectedItem();
+		entryToUpdate.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
+		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
+
+		if(service.updateEntryToMAL(entryToUpdate))
+		{
+			System.out.println("Updated successfully.");
+		}
+		else
+		{
+			System.err.println("Couldn't update");
+		}
 	}
 
 	@FXML
@@ -103,7 +114,7 @@ public class MainViewController
 	{
 		try
 		{
-			entriesList.getSelectionModel().getSelectedItem().setSeriesEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
+			entriesList.getSelectionModel().getSelectedItem().setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
 		}
 		catch (NumberFormatException e)
 		{

@@ -114,7 +114,13 @@ public class DataService
 		}
 	}
 
-	public void updateEntryToMAL(ListEntry entry)
+	/**
+	 * Tries to update given entry in user anime list
+	 *
+	 * @param entry to update
+	 * @return true if server returns "Updated"
+	 */
+	public boolean updateEntryToMAL(ListEntry entry)
 	{
 		//TODO Implement this method
 		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
@@ -126,15 +132,20 @@ public class DataService
 		entryBuilder.append("<status>" + entry.getMyStatus().getStatusNumber() + "</status>");
 		entryBuilder.append("<score>" + entry.getMyScore() + "</score>");
 		entryBuilder.append("</entry>");
-
+		System.out.println(entryBuilder.toString());
 		try
 		{
 			Document response = Jsoup.connect(address).data("data", entryBuilder.toString()).header("Authorization", encodedLogin).post();
-			System.out.println(response.toString()); //TODO test it
+
+			if(response.body().ownText().equals("Updated"))
+				return true;
+			else
+				return false;
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
 	}
 }

@@ -5,12 +5,11 @@ import javafx.scene.image.Image;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class ListEntry extends Entry implements Serializable
+public class ListEntry extends Entry
 {
 	Element entry;
 
@@ -201,6 +200,11 @@ public class ListEntry extends Entry implements Serializable
 		return myWatchedEpisodes;
 	}
 
+	public void setMyWatchedEpisodes(int myWatchedEpisodes)
+	{
+		this.myWatchedEpisodes = myWatchedEpisodes;
+	}
+
 	public String getMyStartDate()
 	{
 		return myStartDate;
@@ -219,6 +223,11 @@ public class ListEntry extends Entry implements Serializable
 	public MyStatusEnum getMyStatus()
 	{
 		return myStatus;
+	}
+
+	public void setMyStatus(MyStatusEnum status)
+	{
+		this.myStatus = status;
 	}
 
 	public int getMyRewatching()
