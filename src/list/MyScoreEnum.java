@@ -5,8 +5,8 @@ package list;
  */
 public enum MyScoreEnum
 {
-	ONE(1, "Appalling"), TWO(2, "Horrible"), THREE(3, "Very bad"), FOUR(4, "Bad"), FIVE(5, "Average"),
-	SIX(6, "Fine"), SEVEN(7, "Good"), EIGHT(8, "Very good"), NINE(9, "Great"), TEN(10, "Masterpiece");
+	APPALLING(1), HORRIBLE(2), VERY_BAD(3), BAD(4), AVERAGE(5),
+	FINE(6), GOOD(7), VERY_GOOD(8), GREAT(9), MASTERPIECE(10);
 
 	int score;
 	String description;
@@ -16,34 +16,34 @@ public enum MyScoreEnum
 		switch (score)
 		{
 			case "1":
-				return ONE;
+				return APPALLING;
 
 			case "2":
-				return TWO;
+				return HORRIBLE;
 
 			case "3":
-				return THREE;
+				return VERY_BAD;
 
 			case "4":
-				return FOUR;
+				return BAD;
 
 			case "5":
-				return FIVE;
+				return AVERAGE;
 
 			case "6":
-				return SIX;
+				return FINE;
 
 			case "7":
-				return SEVEN;
+				return GOOD;
 
 			case "8":
-				return EIGHT;
+				return VERY_GOOD;
 
 			case "9":
-				return NINE;
+				return GREAT;
 
 			case "10":
-				return TEN;
+				return MASTERPIECE;
 
 			default:
 				return null;
@@ -58,12 +58,11 @@ public enum MyScoreEnum
 	@Override
 	public String toString()
 	{
-		return "(" + score + ") " + description;
+		return "(" + score + ") " + super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
 	}
 
-	MyScoreEnum(int score, String description)
+	MyScoreEnum(int score)
 	{
 		this.score = score;
-		this.description = description;
 	}
 }
