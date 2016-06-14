@@ -32,6 +32,9 @@ public class LogInController
 	@FXML
 	Label errorLabel;
 
+	/**
+	 * Initializes this controller
+	 */
 	public void init(Stage stage)
 	{
 		this.stage = stage;

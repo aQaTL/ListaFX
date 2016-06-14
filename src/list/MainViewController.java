@@ -37,6 +37,9 @@ public class MainViewController
 	@FXML
 	private Button websiteButton;
 
+	/**
+	 * Initializes this controller
+	 */
 	public void init(DataService service)
 	{
 		this.service = service;
@@ -47,7 +50,7 @@ public class MainViewController
 
 		mySeriesStatusBox.setOnAction(event ->
 		{
-			if(mySeriesStatusBox.getSelectionModel().getSelectedItem() == MyStatusEnum.COMPLETED)
+			if (mySeriesStatusBox.getSelectionModel().getSelectedItem() == MyStatusEnum.COMPLETED)
 			{
 				episodeSpinner.setDisable(true);
 				episodeSpinner.getEditor().setText(Integer.toString(entriesList.getSelectionModel().getSelectedItem().getSeriesEpisodes()));
@@ -76,11 +79,10 @@ public class MainViewController
 			mySeriesStatusBox.getSelectionModel().select(selectedEntry.getMyStatus());
 			seriesImageView.setImage(selectedEntry.getSeriesImage());
 
-			if(selectedEntry.getMyStatus() == MyStatusEnum.COMPLETED)
+			if (selectedEntry.getMyStatus() == MyStatusEnum.COMPLETED)
 				episodeSpinner.setDisable(true);
 			else
 				episodeSpinner.setDisable(false);
-
 		}
 	}
 
@@ -92,7 +94,7 @@ public class MainViewController
 		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
 		entryToUpdate.setMyScore(myScoreBox.getSelectionModel().getSelectedItem());
 
-		if(service.updateEntryToMAL(entryToUpdate))
+		if (service.updateEntryToMAL(entryToUpdate))
 		{
 			System.out.println("Updated successfully.");
 		}
