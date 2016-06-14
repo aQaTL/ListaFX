@@ -1,5 +1,7 @@
 package list;
 
+import list.entry.ListEntry;
+import list.entry.SearchedEntry;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -70,7 +72,7 @@ public class DataService
 	{
 		/*
 		 * There should be a place, where user search for anime, and then, selected anime should be written (maybe)
-          * as list.SearchedEntry, and then, program should create a XML String with data from list.SearchedEntry, and
+          * as list.entry.SearchedEntry, and then, program should create a XML String with data from list.entry.SearchedEntry, and
           * then, add it to MAL
          */
 		try

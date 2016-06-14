@@ -1,17 +1,17 @@
 package list;
 
-import javafx.collections.ObservableListBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import list.entry.ListEntry;
+import list.entry.MyScoreEnum;
+import list.entry.MyStatusEnum;
 
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 public class MainViewController
 {
@@ -45,6 +45,19 @@ public class MainViewController
 		myScoreBox.getItems().addAll(MyScoreEnum.values());
 		mySeriesStatusBox.getItems().addAll(MyStatusEnum.values());
 
+		mySeriesStatusBox.setOnAction(event ->
+		{
+			if(mySeriesStatusBox.getSelectionModel().getSelectedItem() == MyStatusEnum.COMPLETED)
+			{
+				episodeSpinner.setDisable(true);
+				episodeSpinner.getEditor().setText(Integer.toString(entriesList.getSelectionModel().getSelectedItem().getSeriesEpisodes()));
+			}
+			else
+			{
+				episodeSpinner.setDisable(false);
+			}
+		});
+
 		entriesList.getItems().addAll(service.getEntries());
 		entriesList.getSelectionModel().selectFirst();
 		updateEntryDetails();
@@ -62,6 +75,12 @@ public class MainViewController
 			episodeSpinner.getEditor().setText(Integer.toString(selectedEntry.getMyWatchedEpisodes()));
 			mySeriesStatusBox.getSelectionModel().select(selectedEntry.getMyStatus());
 			seriesImageView.setImage(selectedEntry.getSeriesImage());
+
+			if(selectedEntry.getMyStatus() == MyStatusEnum.COMPLETED)
+				episodeSpinner.setDisable(true);
+			else
+				episodeSpinner.setDisable(false);
+
 		}
 	}
 

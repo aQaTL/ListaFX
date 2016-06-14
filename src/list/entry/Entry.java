@@ -1,4 +1,4 @@
-package list;
+package list.entry;
 
 /**
  * Created by Maciej on 2016-05-23.

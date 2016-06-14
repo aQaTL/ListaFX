@@ -1,4 +1,4 @@
-package list;
+package list.entry;
 
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
