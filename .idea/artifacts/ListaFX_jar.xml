@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ListaFX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ListaFX_jar</output-path>
+    <root id="archive" name="ListaFX.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="ListaFX" />
+      <element id="extracted-dir" path="E:/jsoup/jsoup-1.9.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
