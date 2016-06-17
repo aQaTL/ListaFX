@@ -5,12 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import list.DataService;
 import list.MainViewController;
 import org.jsoup.HttpStatusException;
@@ -56,7 +55,7 @@ public class LogInController
 				Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
 
 				DataService service = new DataService(encodedLogin, usernameField.getText());
-				//TODO showing warning to user stage.setOnCloseRequest(windowEvent -> );
+				stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
 
 				FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
 				Parent mainView = loader.load();
@@ -78,6 +77,21 @@ public class LogInController
 		else
 		{
 			errorLabel.setVisible(false);
+		}
+	}
+
+	private void showExitWarning(WindowEvent event)
+	{
+		event.consume();
+
+		Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "Confirm exit", ButtonType.YES, ButtonType.NO);
+		warning.setHeaderText("Quit program?");
+		warning.setContentText("Are you sure you want to exit?");
+		warning.showAndWait();
+
+		if(warning.getResult() == ButtonType.YES)
+		{
+			stage.close();
 		}
 	}
 }

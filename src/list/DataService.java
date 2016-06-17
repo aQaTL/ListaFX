@@ -92,11 +92,6 @@ public class DataService
 				System.out.println("Added successfully");
 			}
 		}
-		catch (HttpStatusException e)
-		{
-			System.err.println("Couldn't add. STATUS=" + e.getStatusCode());
-			e.printStackTrace();
-		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
@@ -133,7 +128,7 @@ public class DataService
 		entryBuilder.append("<status>" + entry.getMyStatus().getStatusNumber() + "</status>");
 		entryBuilder.append("<score>" + entry.getMyScore().getScore() + "</score>");
 		entryBuilder.append("</entry>");
-		System.out.println(entryBuilder.toString());
+
 		try
 		{
 			Document response = Jsoup.connect(address).data("data", entryBuilder.toString()).header("Authorization", encodedLogin).post();
