@@ -91,7 +91,7 @@ public class LogInController
 
 		if(warning.getResult() == ButtonType.YES)
 		{
-			stage.close();
+			System.exit(0);
 		}
 	}
 }

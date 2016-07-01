@@ -25,41 +25,20 @@ public class SearchedEntry extends Entry
 
 	public SearchedEntry(Element entry)
 	{
-		TextNode node = (TextNode) entry.getElementsByTag("id").first().childNode(0);
-		id = Integer.parseInt(node.getWholeText());
+		this.entry = entry;
 
-		node = (TextNode) entry.getElementsByTag("title").first().childNode(0);
-		title = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("english").first().childNode(0);
-		englishTitle = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("synonyms").first().childNode(0);
-		synonyms = parseSynonyms(node.getWholeText());
-
-		node = (TextNode) entry.getElementsByTag("episodes").first().childNode(0);
-		episodes = Integer.parseInt(node.getWholeText());
-
-		node = (TextNode) entry.getElementsByTag("score").first().childNode(0);
-		score = Double.parseDouble(node.getWholeText());
-
-		node = (TextNode) entry.getElementsByTag("type").first().childNode(0);
-		type = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("status").first().childNode(0);
-		status = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("start_date").first().childNode(0);
-		startDate = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("end_date").first().childNode(0);
-		endDate = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("synopsis").first().childNode(0);
-		synopsis = node.getWholeText();
-
-		node = (TextNode) entry.getElementsByTag("image").first().childNode(0);
-		image = new Image(node.getWholeText());
+		id = Integer.parseInt(getStringFromElement("id"));
+		title = getStringFromElement("title");
+		englishTitle = getStringFromElement("english");
+		synonyms = parseSynonyms(getStringFromElement("synonyms"));
+		episodes = Integer.parseInt(getStringFromElement("episodes"));
+		score = Double.parseDouble(getStringFromElement("score"));
+		type = getStringFromElement("type");
+		status = getStringFromElement("status");
+		startDate = getStringFromElement("start_date");
+		endDate = getStringFromElement("end_date");
+		synopsis = getStringFromElement("synopsis");
+		image = new Image(getStringFromElement("image"));
 	}
 
 	private String[] parseSynonyms(String synonyms)
@@ -80,7 +59,7 @@ public class SearchedEntry extends Entry
 			}
 		}
 
-		return (String[]) synonymsArray.toArray();
+		return synonymsArray.toArray(new String[synonymsArray.size()]);
 	}
 
 	public int getId()

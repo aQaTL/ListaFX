@@ -6,7 +6,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="ListaFX" />
-      <element id="extracted-dir" path="E:/jsoup/jsoup-1.9.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../jsoup/jsoup-1.9.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

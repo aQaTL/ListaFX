@@ -11,8 +11,6 @@ import java.util.ArrayList;
 
 public class ListEntry extends Entry
 {
-	Element entry;
-
 	private int seriesDataBaseID;
 	private String seriesTitle;
 	private String[] seriesSynonyms;
@@ -49,11 +47,7 @@ public class ListEntry extends Entry
 		initFields(customWebsite);
 	}
 
-	private String getStringFromElement(String elementTag)
-	{
-		TextNode node = (TextNode) entry.getElementsByTag(elementTag).first().childNode(0);
-		return node.getWholeText();
-	}
+
 
 	private void initFields(String websiteURL)
 	{

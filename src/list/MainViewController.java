@@ -1,13 +1,18 @@
 package list;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import list.entry.ListEntry;
 import list.entry.MyScoreEnum;
 import list.entry.MyStatusEnum;
+import list.search.SearchController;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -148,7 +153,22 @@ public class MainViewController
 	@FXML
 	private void addEntry()
 	{
-		//Searching for new entry
+		try
+		{
+			FXMLLoader loader = new FXMLLoader(SearchController.class.getResource("SearchView.fxml"));
+
+			Parent parent = loader.load();
+			loader.<SearchController>getController().init(service);
+
+			Stage searchWindow = new Stage();
+			searchWindow.setTitle("Search for anime");
+			searchWindow.setScene(new Scene(parent));
+			searchWindow.showAndWait();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 

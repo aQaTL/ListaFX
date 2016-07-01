@@ -1,14 +1,19 @@
 package list;
 
+import list.entry.Entry;
 import list.entry.ListEntry;
 import list.entry.SearchedEntry;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * TODO write some javadoc here
@@ -19,13 +24,16 @@ public class DataService
 {
 	private String encodedLogin;
 	public String malAddress = "http://myanimelist.net/";
-	private long userID;
+
+	public static final int PARSER_THREADS = 4;
 
 	private ArrayList<ListEntry> entries;
+	private ExecutorService parserThreadPool;
 
 	public DataService(String encodedLogin, String username) throws IOException
 	{
 		this.encodedLogin = encodedLogin;
+		parserThreadPool = Executors.newFixedThreadPool(PARSER_THREADS);
 
 		String userListAddress = "http://myanimelist.net/malappinfo.php?u=" + username + "&status=all&type=anime";
 		Document userListDocument = Jsoup.connect(userListAddress).get();
@@ -46,29 +54,47 @@ public class DataService
 	 * @param seriesTitle title of the sought anime
 	 * @return array of ListEntry that have been found
 	 */
-	public SearchedEntry[] searchForEntries(String seriesTitle)
+	public synchronized SearchedEntry[] searchForEntries(String seriesTitle)
 	{
 		try
 		{
 			String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
 
-			Document searchingResultsDocument = Jsoup.connect(malAddress).header("Authorization", encodedLogin).get();
+			Document searchingResultsDocument = Jsoup.connect(address).header("Authorization", encodedLogin).get();
 			Elements entries = searchingResultsDocument.getElementsByTag("entry");
+			int amountOfEntries = entries.size();
 
-			SearchedEntry[] entriesArray = new SearchedEntry[entries.size()];
-			entries.forEach(element -> entriesArray[entries.indexOf(element)] = new SearchedEntry(element));
+			long milis = System.currentTimeMillis();
+			System.out.println("Amount of entries: " + amountOfEntries);
 
+			SearchedEntry[] entriesArray = new SearchedEntry[amountOfEntries];
+			List<Future<Entry>> futureTasks = new ArrayList<>(amountOfEntries);
+
+			//Multithreading here
+			entries.forEach(entry -> futureTasks.add(parserThreadPool.submit(new EntryParser(EntryParser.EntryType.SEARCHED_ENTRY, entry))));
+
+			for(int i = 0; i < amountOfEntries; i++)
+			{
+				entriesArray[i] = (SearchedEntry) futureTasks.get(i).get();
+			}
+
+			System.out.println(System.currentTimeMillis() - milis);
 			return entriesArray;
 		}
 		catch (IOException e)
 		{
 			return new SearchedEntry[0];
 		}
+		catch (InterruptedException | ExecutionException e)
+		{
+			e.printStackTrace();
+		}
+		return new SearchedEntry[0];
 	}
 
 
 	//Adds new entry to user's list
-	public void addEntryToMAL(long id, int initEpisode)
+	public void addEntryToMAL(SearchedEntry entry, int initEpisode)
 	{
 		/*
 		 * There should be a place, where user search for anime, and then, selected anime should be written (maybe)
@@ -77,7 +103,7 @@ public class DataService
          */
 		try
 		{
-			String address = "http://myanimelist.net/api/animelist/add/" + id + ".xml";
+			String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
 			String entryToAdd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 					"<entry>" +
 					"<episode>" + initEpisode + "</episode>" +
@@ -133,7 +159,7 @@ public class DataService
 		{
 			Document response = Jsoup.connect(address).data("data", entryBuilder.toString()).header("Authorization", encodedLogin).post();
 
-			if(response.body().ownText().equals("Updated"))
+			if (response.body().ownText().equals("Updated"))
 				return true;
 			else
 				return false;
