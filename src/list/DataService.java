@@ -1,13 +1,15 @@
 package list;
 
-import list.entry.Entry;
-import list.entry.ListEntry;
-import list.entry.SearchedEntry;
+import list.entry.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -96,22 +98,16 @@ public class DataService
 	//Adds new entry to user's list
 	public void addEntryToMAL(SearchedEntry entry, int initEpisode)
 	{
-		/*
-		 * There should be a place, where user search for anime, and then, selected anime should be written (maybe)
-          * as list.entry.SearchedEntry, and then, program should create a XML String with data from list.entry.SearchedEntry, and
-          * then, add it to MAL
-         */
 		try
 		{
 			String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
-			String entryToAdd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-					"<entry>" +
-					"<episode>" + initEpisode + "</episode>" +
-					"<status>1</status>" +
-					"<score>0</score>" +
-					"</entry>";
 
-			Document addAnimeDocument = Jsoup.connect(address).data("data", entryToAdd).header("Authorization", encodedLogin).post();
+			EntryXMLDataBuilder xmlDataBuilder = new EntryXMLDataBuilder();
+			xmlDataBuilder.addEpisode(initEpisode);
+			xmlDataBuilder.addStatus(MyStatusEnum.getMyStatusEnum("1"));
+			xmlDataBuilder.addScore(MyScoreEnum.getMyScoreEnum("0"));
+
+			Document addAnimeDocument = Jsoup.connect(address).data("data", xmlDataBuilder.getXML()).header("Authorization", encodedLogin).post();
 
 			if (addAnimeDocument.title().contains("Created"))
 			{
@@ -147,17 +143,14 @@ public class DataService
 	{
 		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
 
-		StringBuilder entryBuilder = new StringBuilder();
-		entryBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		entryBuilder.append("<entry>");
-		entryBuilder.append("<episode>" + entry.getMyWatchedEpisodes() + "</episode>");
-		entryBuilder.append("<status>" + entry.getMyStatus().getStatusNumber() + "</status>");
-		entryBuilder.append("<score>" + entry.getMyScore().getScore() + "</score>");
-		entryBuilder.append("</entry>");
+		EntryXMLDataBuilder xmlDataBuilder = new EntryXMLDataBuilder();
+		xmlDataBuilder.addEpisode(entry.getMyWatchedEpisodes());
+		xmlDataBuilder.addStatus(entry.getMyStatus());
+		xmlDataBuilder.addScore(entry.getMyScore());
 
 		try
 		{
-			Document response = Jsoup.connect(address).data("data", entryBuilder.toString()).header("Authorization", encodedLogin).post();
+			Document response = Jsoup.connect(address).data("data", xmlDataBuilder.getXML()).header("Authorization", encodedLogin).post();
 
 			if (response.body().ownText().equals("Updated"))
 				return true;
@@ -169,5 +162,45 @@ public class DataService
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public void storePassword() //TODO
+	{
+		try
+		{
+			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+			SecretKey aesKey = keyGenerator.generateKey();
+
+			Cipher aesCipher = Cipher.getInstance("AES");
+			aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
+
+			byte[] loginToStore = encodedLogin.getBytes();
+
+			byte[] encodedLogin = aesCipher.doFinal(loginToStore);
+
+			aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
+			byte[] decryptedLogin = aesCipher.doFinal(encodedLogin);
+
+			System.out.println("Comparing logins...");
+			System.out.println(loginToStore);
+			System.out.println(decryptedLogin);
+
+		}
+		catch (GeneralSecurityException e)
+		{
+			System.err.println("Couldn't save your password!");
+			e.printStackTrace();
+		}
+	}
+
+	private String readPassword()
+	{
+		return null;
+	}
+
+
+	private void createXMLData(ListEntry entry)
+	{
+
 	}
 }

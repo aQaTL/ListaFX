@@ -5,7 +5,7 @@ package list.entry;
  */
 public enum MyScoreEnum
 {
-	APPALLING(1), HORRIBLE(2), VERY_BAD(3), BAD(4), AVERAGE(5),
+	NOT_RATED_YET(0), APPALLING(1), HORRIBLE(2), VERY_BAD(3), BAD(4), AVERAGE(5),
 	FINE(6), GOOD(7), VERY_GOOD(8), GREAT(9), MASTERPIECE(10);
 
 	int score;
@@ -15,6 +15,9 @@ public enum MyScoreEnum
 	{
 		switch (score)
 		{
+			case "0":
+				return NOT_RATED_YET;
+
 			case "1":
 				return APPALLING;
 

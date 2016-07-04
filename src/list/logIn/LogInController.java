@@ -24,6 +24,8 @@ public class LogInController
 {
 	Stage stage;
 
+	private DataService service;
+
 	@FXML
 	TextField usernameField;
 	@FXML
@@ -54,7 +56,7 @@ public class LogInController
 
 				Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
 
-				DataService service = new DataService(encodedLogin, usernameField.getText());
+				service = new DataService(encodedLogin, usernameField.getText());
 				stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
 
 				FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
@@ -80,6 +82,13 @@ public class LogInController
 		}
 	}
 
+
+	/**
+	 * Shows exit confirmation dialog;
+	 * if user answers yes, then program
+	 * saves his encryptedLogin form DataService
+	 * and exits with 0
+	 */
 	private void showExitWarning(WindowEvent event)
 	{
 		event.consume();
@@ -94,4 +103,6 @@ public class LogInController
 			System.exit(0);
 		}
 	}
+
+
 }

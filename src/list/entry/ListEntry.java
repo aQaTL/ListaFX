@@ -1,6 +1,7 @@
 package list.entry;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollToEvent;
 import javafx.scene.image.Image;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
