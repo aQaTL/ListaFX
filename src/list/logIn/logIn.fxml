@@ -3,25 +3,28 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.logIn.LogInController">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.logIn.LogInController">
    <children>
 
        <Label fx:id="errorLabel" text="Bad password!" visible="false" />
       <Separator prefHeight="37.0" prefWidth="600.0" />
-      <TextField fx:id="usernameField" onKeyPressed="#tryToLogIn" prefHeight="31.0" prefWidth="472.0" promptText="Login">
+      <TextField fx:id="usernameField" onKeyPressed="#logIn" prefHeight="31.0" prefWidth="472.0" promptText="Login">
          <VBox.margin>
             <Insets left="100.0" right="100.0" />
          </VBox.margin>
       </TextField>
-      <PasswordField fx:id="userPasswordField" onKeyPressed="#tryToLogIn" promptText="Password">
+      <PasswordField fx:id="userPasswordField" onKeyPressed="#logIn" promptText="Password">
          <VBox.margin>
             <Insets left="100.0" right="100.0" top="20.0" />
          </VBox.margin>
       </PasswordField>
+      <Separator layoutX="10.0" layoutY="161.0" prefHeight="37.0" prefWidth="600.0" />
+      <ProgressBar fx:id="progressBar" prefHeight="24.0" prefWidth="400.0" visible="false" />
    </children>
 
 </VBox>

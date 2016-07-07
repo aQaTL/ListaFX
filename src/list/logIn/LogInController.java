@@ -1,6 +1,8 @@
 package list.logIn;
 
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,9 +24,10 @@ import java.io.IOException;
  */
 public class LogInController
 {
-	Stage stage;
-
-	private DataService service;
+	private Stage stage;
+	private FXMLLoader loader;
+	private Parent mainView;
+	private LogInService logInService;
 
 	@FXML
 	TextField usernameField;
@@ -32,49 +35,59 @@ public class LogInController
 	PasswordField userPasswordField;
 	@FXML
 	Label errorLabel;
+	@FXML
+	ProgressBar progressBar;
 
 	/**
 	 * Initializes this controller
 	 */
-	public void init(Stage stage)
+	public void init(Stage stage) throws IOException
 	{
 		this.stage = stage;
+		loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
+		mainView = loader.load();
+
+		initLogInService();
+	}
+
+	/**
+	 * Initializes logInService
+	 */
+	private void initLogInService()
+	{
+		logInService = new LogInService();
+		logInService.setOnFailed(workerStateEvent ->
+		{
+			Exception e = (Exception) workerStateEvent.getSource().getException();
+
+			if (e instanceof HttpStatusException && ((HttpStatusException) e).getStatusCode() == 401)
+			{
+				progressBar.setVisible(false);
+				errorLabel.setVisible(true);
+			}
+			else
+				e.printStackTrace();
+		});
+		logInService.setOnSucceeded(workerStateEvent ->
+		{
+			loader.<MainViewController>getController().init(logInService.getValue());
+
+			stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
+			stage.setScene(new Scene(mainView, loader.<MainViewController>getController().splitPane.getPrefWidth(), loader.<MainViewController>getController().splitPane.getPrefHeight()));
+		});
 	}
 
 	/**
 	 * Invoked every time, when user press a key in usernameField or userPasswordField
 	 */
 	@FXML
-	private void tryToLogIn(KeyEvent event)
+	private void logIn(KeyEvent event)
 	{
 		if (event.getCode() == KeyCode.ENTER)
 		{
-			try
-			{
-				String userCredentials = usernameField.getText() + ":" + userPasswordField.getText();
-				String encodedLogin = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+			progressBar.setVisible(true);
 
-				Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
-
-				service = new DataService(encodedLogin, usernameField.getText());
-				stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
-
-				FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
-				Parent mainView = loader.load();
-				loader.<MainViewController>getController().init(service);
-				stage.setScene(new Scene(mainView, loader.<MainViewController>getController().splitPane.getPrefWidth(), loader.<MainViewController>getController().splitPane.getPrefHeight()));
-			}
-			catch (IOException e)
-			{
-				if (e instanceof HttpStatusException && ((HttpStatusException) e).getStatusCode() == 401)
-				{
-					errorLabel.setVisible(true);
-				}
-				else
-				{
-					e.printStackTrace();
-				}
-			}
+			logInService.restart();
 		}
 		else
 		{
@@ -98,11 +111,30 @@ public class LogInController
 		warning.setContentText("Are you sure you want to exit?");
 		warning.showAndWait();
 
-		if(warning.getResult() == ButtonType.YES)
+		if (warning.getResult() == ButtonType.YES)
 		{
 			System.exit(0);
 		}
 	}
 
+	private class LogInService extends Service<DataService>
+	{
+		@Override
+		protected Task<DataService> createTask()
+		{
+			return new Task<DataService>()
+			{
+				@Override
+				protected DataService call() throws IOException
+				{
+					String userCredentials = usernameField.getText() + ":" + userPasswordField.getText();
+					String encodedLogin = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 
+					Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
+
+					return new DataService(encodedLogin, usernameField.getText());
+				}
+			};
+		}
+	}
 }
