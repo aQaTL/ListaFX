@@ -16,7 +16,10 @@ import list.search.SearchController;
 
 import java.awt.Desktop;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Optional;
 
 public class MainViewController
 {
@@ -187,5 +190,29 @@ public class MainViewController
 			service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
 			entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
 		}
+	}
+
+	@FXML
+	private void showCustomWebsiteDialog()
+	{
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Set custom website");
+		dialog.setHeaderText("Set custom website for " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle());
+
+		Optional<String> result = dialog.showAndWait();
+		result.ifPresent(url ->
+		{
+			try
+			{
+				URL customWebsite = new URL(url);
+				ListEntry entry = entriesList.getSelectionModel().getSelectedItem();
+				entry.setWebsite(customWebsite);
+				service.addCustomWebiste(entry, customWebsite);
+			}
+			catch (MalformedURLException e)
+			{
+				showCustomWebsiteDialog();
+			}
+		});
 	}
 }

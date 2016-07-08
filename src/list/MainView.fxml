@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
+<GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -116,6 +116,7 @@
               <items>
                 <MenuItem fx:id="addEntryMenuItem" mnemonicParsing="false" onAction="#addEntry" text="Add new" />
                   <MenuItem fx:id="deleteEntryMenuItem" mnemonicParsing="false" onAction="#deleteEntry" text="Delete selected" />
+                  <MenuItem fx:id="setCustomWebsiteMenuItem" mnemonicParsing="false" onAction="#showCustomWebsiteDialog" text="Set custom website" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">

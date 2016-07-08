@@ -8,10 +8,13 @@ import org.jsoup.select.Elements;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,11 +28,14 @@ import java.util.concurrent.Future;
 public class DataService
 {
 	private String encodedLogin;
+
 	public static String malAddress = "http://myanimelist.net/";
 
 	public static final int PARSER_THREADS = 4;
 
 	private ArrayList<ListEntry> entries;
+	private Map<Integer, URL> customURLs;
+
 	private ExecutorService parserThreadPool;
 	private boolean locked = false;
 
@@ -41,9 +47,20 @@ public class DataService
 		String userListAddress = "http://myanimelist.net/malappinfo.php?u=" + username + "&status=all&type=anime";
 		Document userListDocument = Jsoup.connect(userListAddress).get();
 
+		customURLs = loadCustomWebsites();
+
 		Elements animeEntries = userListDocument.getElementsByTag("anime");
 		entries = new ArrayList<>(animeEntries.size());
-		animeEntries.forEach(entry -> entries.add(new ListEntry(entry)));
+
+		animeEntries.forEach(entry ->
+		{
+			ListEntry listEntry = new ListEntry(entry);
+
+			if (customURLs.containsKey(listEntry.getSeriesDataBaseID()))
+				listEntry.setWebsite(customURLs.get(listEntry.getSeriesDataBaseID()));
+
+			entries.add(listEntry);
+		});
 	}
 
 	public ArrayList<ListEntry> getEntries()
@@ -93,7 +110,8 @@ public class DataService
 				return new SearchedEntry[0];
 			}
 			catch (InterruptedException | ExecutionException e)
-			{}
+			{
+			}
 			finally
 			{
 				locked = false;
@@ -172,6 +190,41 @@ public class DataService
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public void addCustomWebiste(ListEntry entry, URL website)
+	{
+		entries.get(entries.indexOf(entry)).setWebsite(website);
+		customURLs.put(entry.getSeriesDataBaseID(), website);
+	}
+
+	private HashMap<Integer, URL> loadCustomWebsites()
+	{
+		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("customURLs.dat")))
+		{
+			return (HashMap<Integer, URL>) in.readObject();
+		}
+		catch (IOException | ClassNotFoundException e)
+		{
+			return new HashMap<>();
+		}
+	}
+
+	private void storeCustomWebsites()
+	{
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("customURLs.dat")))
+		{
+			out.writeObject(customURLs);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void storeUserPrefs()
+	{
+		storeCustomWebsites();
 	}
 
 	public void storePassword() //TODO

@@ -28,6 +28,7 @@ public class LogInController
 	private FXMLLoader loader;
 	private Parent mainView;
 	private LogInService logInService;
+	private DataService service;
 
 	@FXML
 	TextField usernameField;
@@ -70,7 +71,8 @@ public class LogInController
 		});
 		logInService.setOnSucceeded(workerStateEvent ->
 		{
-			loader.<MainViewController>getController().init(logInService.getValue());
+			service = logInService.getValue();
+			loader.<MainViewController>getController().init(service);
 
 			stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
 			stage.setScene(new Scene(mainView, loader.<MainViewController>getController().splitPane.getPrefWidth(), loader.<MainViewController>getController().splitPane.getPrefHeight()));
@@ -113,6 +115,7 @@ public class LogInController
 
 		if (warning.getResult() == ButtonType.YES)
 		{
+			service.storeUserPrefs();
 			System.exit(0);
 		}
 	}

@@ -38,19 +38,10 @@ public class ListEntry extends Entry
 	{
 		this.entry = entry;
 
-		initFields(null);
+		initFields();
 	}
 
-	public ListEntry(Element entry, String customWebsite)
-	{
-		this.entry = entry;
-
-		initFields(customWebsite);
-	}
-
-
-
-	private void initFields(String websiteURL)
+	private void initFields()
 	{
 		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));
 		seriesTitle = getStringFromElement("series_title");
@@ -82,26 +73,13 @@ public class ListEntry extends Entry
 
 		try
 		{
-			if (websiteURL != null)
-			{
-				website = new URL(websiteURL);
-			}
-			else
-			{
-				website = new URL("http://myanimelist.net/anime/" + seriesDataBaseID + "/");
-			}
+			website = new URL("http://myanimelist.net/anime/" + seriesDataBaseID + "/");
 		}
 		catch (MalformedURLException e)
 		{
 			e.printStackTrace();
-
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setHeaderText(null);
-			alert.setContentText("Bad website address");
-			alert.showAndWait();
 		}
 	}
-
 
 	@Override
 	public String toString()
@@ -253,5 +231,10 @@ public class ListEntry extends Entry
 	public URL getWebsite()
 	{
 		return website;
+	}
+
+	public void setWebsite(URL website)
+	{
+		this.website = website;
 	}
 }
