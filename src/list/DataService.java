@@ -25,12 +25,13 @@ import java.util.concurrent.Future;
 public class DataService
 {
 	private String encodedLogin;
-	public String malAddress = "http://myanimelist.net/";
+	public static String malAddress = "http://myanimelist.net/";
 
 	public static final int PARSER_THREADS = 4;
 
 	private ArrayList<ListEntry> entries;
 	private ExecutorService parserThreadPool;
+	private boolean locked = false;
 
 	public DataService(String encodedLogin, String username) throws IOException
 	{
@@ -56,42 +57,51 @@ public class DataService
 	 * @param seriesTitle title of the sought anime
 	 * @return array of ListEntry that have been found
 	 */
-	public synchronized SearchedEntry[] searchForEntries(String seriesTitle)
+	public SearchedEntry[] searchForEntries(String seriesTitle)
 	{
-		try
+		if (!locked)
 		{
-			String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
-
-			Document searchingResultsDocument = Jsoup.connect(address).header("Authorization", encodedLogin).get();
-			Elements entries = searchingResultsDocument.getElementsByTag("entry");
-			int amountOfEntries = entries.size();
-
-			long milis = System.currentTimeMillis();
-			System.out.println("Amount of entries: " + amountOfEntries);
-
-			SearchedEntry[] entriesArray = new SearchedEntry[amountOfEntries];
-			List<Future<Entry>> futureTasks = new ArrayList<>(amountOfEntries);
-
-			//Multithreading here
-			entries.forEach(entry -> futureTasks.add(parserThreadPool.submit(new EntryParser(EntryParser.EntryType.SEARCHED_ENTRY, entry))));
-
-			for(int i = 0; i < amountOfEntries; i++)
+			try
 			{
-				entriesArray[i] = (SearchedEntry) futureTasks.get(i).get();
-			}
+				locked = true;
 
-			System.out.println(System.currentTimeMillis() - milis);
-			return entriesArray;
-		}
-		catch (IOException e)
-		{
+				String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
+
+				Document searchingResultsDocument = Jsoup.connect(address).header("Authorization", encodedLogin).get();
+				Elements entries = searchingResultsDocument.getElementsByTag("entry");
+				int amountOfEntries = entries.size();
+
+				long milis = System.currentTimeMillis();
+				System.out.println("Amount of entries: " + amountOfEntries);
+
+				SearchedEntry[] entriesArray = new SearchedEntry[amountOfEntries];
+				List<Future<Entry>> futureTasks = new ArrayList<>(amountOfEntries);
+
+				//Multithreading here
+				entries.forEach(entry -> futureTasks.add(parserThreadPool.submit(new EntryParser(EntryParser.EntryType.SEARCHED_ENTRY, entry))));
+
+				for (int i = 0; i < amountOfEntries; i++)
+				{
+					entriesArray[i] = (SearchedEntry) futureTasks.get(i).get();
+				}
+
+				System.out.println(System.currentTimeMillis() - milis);
+				return entriesArray;
+			}
+			catch (IOException e)
+			{
+				return new SearchedEntry[0];
+			}
+			catch (InterruptedException | ExecutionException e)
+			{}
+			finally
+			{
+				locked = false;
+			}
 			return new SearchedEntry[0];
 		}
-		catch (InterruptedException | ExecutionException e)
-		{
-			e.printStackTrace();
-		}
-		return new SearchedEntry[0];
+		else
+			return new SearchedEntry[0];
 	}
 
 

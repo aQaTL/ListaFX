@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
@@ -48,11 +48,7 @@
          </content>
       </ScrollPane>
     </center>
-    <bottom>
-        <Label fx:id="stateLabel" alignment="CENTER_RIGHT" prefHeight="21.0" prefWidth="171.0" text="State" BorderPane.alignment="CENTER_RIGHT">
-            <BorderPane.margin>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </BorderPane.margin>
-        </Label>
-    </bottom>
+   <bottom>
+      <ProgressBar fx:id="progressBar" prefHeight="23.0" prefWidth="1001.0" visible="false" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>

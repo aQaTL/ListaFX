@@ -1,7 +1,9 @@
 package list.search;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,14 +16,12 @@ import list.entry.SearchedEntry;
  */
 public class SearchController
 {
-	private DataService service;
-	private FXMLLoader loader;
+	private DataService dataService;
+	private SearchService searchService;
 
-	@FXML
-	private TextField searchField;
-
-	@FXML
-	private GridPane resultsGrid;
+	@FXML private TextField searchField;
+	@FXML private GridPane resultsGrid;
+	@FXML private ProgressBar progressBar;
 
 	/**
 	 * Initializes this controller
@@ -30,36 +30,62 @@ public class SearchController
 	 */
 	public void init(DataService service)
 	{
-		this.service = service;
+		this.dataService = service;
+		searchService = new SearchService();
+
+		searchService.setOnRunning(event -> progressBar.setVisible(true));
+		searchService.setOnSucceeded((serviceState) ->
+		{
+			showSearchResults(searchService.getValue());
+			progressBar.setVisible(false);
+		});
 	}
 
-
-	public synchronized void search(KeyEvent event)
+	@FXML
+	private void search(KeyEvent event)
 	{
 		if (event.getCode() == KeyCode.ENTER)
 		{
-			SearchedEntry[] searchedEntries = service.searchForEntries(searchField.getText());
+			searchService.restart();
+		}
+	}
 
-			//TODO clear resultsGrid
+	public void showSearchResults(SearchedEntry[] searchedEntries)
+	{
+		resultsGrid.getChildren().clear();
 
-			int row = 0;
-			int column = 0;
+		int row = 0;
+		int column = 0;
 
-			for (SearchedEntry e : searchedEntries)
+		for (SearchedEntry e : searchedEntries)
+		{
+			if (column >= 5)
 			{
-				if (column >= 5)
-				{
-					column = 0;
-					row++;
-				}
-
-				Result result = new Result(service, e);
-				GridPane.setConstraints(result, column, row);
-				resultsGrid.getChildren().add(result);
-
-				column++;
+				column = 0;
+				row++;
 			}
 
+			Result result = new Result(dataService, e);
+			GridPane.setConstraints(result, column, row);
+			resultsGrid.getChildren().add(result);
+
+			column++;
+		}
+	}
+
+	private class SearchService extends Service<SearchedEntry[]>
+	{
+		@Override
+		protected Task<SearchedEntry[]> createTask()
+		{
+			return new Task<SearchedEntry[]>()
+			{
+				@Override
+				protected SearchedEntry[] call() throws Exception
+				{
+					return dataService.searchForEntries(searchField.getText());
+				}
+			};
 		}
 	}
 }
