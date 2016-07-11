@@ -2,7 +2,6 @@ package list;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import list.logIn.LogInController;
@@ -16,11 +15,13 @@ public class Main extends Application
 	public void start(Stage primaryStage) throws Exception
 	{
 		FXMLLoader loader = new FXMLLoader(LogInController.class.getResource("logIn.fxml"));
-		Parent logInView = loader.load();
+		Scene logInScene = new Scene(loader.load(), PREFERRED_WIDTH, PREFERRED_HEIGHT);
+		logInScene.getStylesheets().add(Main.class.getResource("logIn.css").toExternalForm());
+
 		loader.<LogInController>getController().init(primaryStage);
 
 		primaryStage.setTitle("ListaFX");
-		primaryStage.setScene(new Scene(logInView, PREFERRED_WIDTH, PREFERRED_HEIGHT));
+		primaryStage.setScene(logInScene);
 		primaryStage.show();
 	}
 
