@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="773.0" prefWidth="1002.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.search.SearchController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="773.0" prefWidth="1062.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.search.SearchController">
     <top>
         <HBox alignment="CENTER" prefHeight="43.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
@@ -22,9 +22,9 @@
         </HBox>
     </top>
     <center>
-      <ScrollPane BorderPane.alignment="CENTER">
+      <ScrollPane prefHeight="707.0" prefWidth="1058.0" BorderPane.alignment="CENTER">
          <content>
-              <GridPane fx:id="resultsGrid" alignment="CENTER" prefHeight="3700.0" prefWidth="979.0">
+              <GridPane fx:id="resultsGrid" alignment="CENTER" prefHeight="3700.0" prefWidth="1040.0">
                   <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -46,9 +46,12 @@
                   </rowConstraints>
               </GridPane>
          </content>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
       </ScrollPane>
     </center>
    <bottom>
-      <ProgressBar fx:id="progressBar" prefHeight="23.0" prefWidth="1001.0" visible="false" BorderPane.alignment="CENTER" />
+      <ProgressBar fx:id="progressBar" prefHeight="23.0" prefWidth="1061.0" visible="false" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>
