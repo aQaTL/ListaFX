@@ -14,10 +14,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
+<GridPane stylesheets="@MainView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -40,17 +41,18 @@
                   </columnConstraints>
                   <rowConstraints>
                   <RowConstraints maxHeight="162.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="162.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="162.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="399.0" minHeight="10.0" prefHeight="392.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="94.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
-                  <StackPane alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <StackPane alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                      <children>
-                        <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#openWebsite" prefHeight="50.0" prefWidth="108.0" text="Website">
+                        <Button id="website_button" fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#openWebsite" prefHeight="50.0" prefWidth="108.0" text="Website">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -60,8 +62,8 @@
                         </Button>
                      </children>
                   </StackPane>
-                  <Label fx:id="seriesTitleLabel" alignment="CENTER" prefHeight="26.0" prefWidth="192.0" text="Series title" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <GridPane prefHeight="42.0" prefWidth="441.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                  <Label id="title_label" fx:id="seriesTitleLabel" alignment="CENTER" prefHeight="31.0" prefWidth="442.0" text="Series title" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <GridPane alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="441.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="0.0" prefWidth="209.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="0.0" prefWidth="291.0" />
@@ -71,28 +73,43 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="progressLabel" prefHeight="21.0" prefWidth="92.0" text="Progress" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                        <Label id="stat_label" fx:id="progressLabel" prefHeight="21.0" prefWidth="92.0" text="Progress" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <Spinner fx:id="episodeSpinner" editable="true" onKeyReleased="#checkSpinner" prefHeight="31.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
+                        <Spinner fx:id="episodeSpinner" editable="true" onKeyReleased="#checkSpinner" prefHeight="31.0" prefWidth="218.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets></Spinner>
                         <ChoiceBox fx:id="mySeriesStatusBox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                      </children>
                   </GridPane>
-                  <ImageView fx:id="seriesImageView" fitHeight="379.0" fitWidth="232.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <ImageView fx:id="seriesImageView" fitHeight="379.0" fitWidth="232.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </ImageView>
-                  <ChoiceBox fx:id="myScoreBox" prefHeight="31.0" prefWidth="219.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <HBox alignment="CENTER_LEFT" spacing="15.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
-                  </ChoiceBox>
-                  <StackPane alignment="TOP_CENTER" layoutX="237.0" layoutY="522.0" GridPane.rowIndex="3">
                      <children>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#updateEntryRemotely" prefHeight="50.0" prefWidth="108.0" text="Update">
+                        <Label id="stat_label" text="Score">
+                           <padding>
+                              <Insets left="15.0" right="22.0" />
+                           </padding>
+                        </Label>
+                        <ChoiceBox fx:id="myScoreBox" prefHeight="31.0" prefWidth="219.0">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ChoiceBox>
+                     </children>
+                  </HBox>
+                  <StackPane alignment="TOP_CENTER" layoutX="237.0" layoutY="522.0" GridPane.rowIndex="4">
+                     <children>
+                        <Button id="update_button" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#updateEntryRemotely" prefHeight="50.0" prefWidth="108.0" text="Update">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
