@@ -16,7 +16,6 @@ public class Main extends Application
 	{
 		FXMLLoader loader = new FXMLLoader(LogInController.class.getResource("logIn.fxml"));
 		Scene logInScene = new Scene(loader.load(), PREFERRED_WIDTH, PREFERRED_HEIGHT);
-		logInScene.getStylesheets().add(Main.class.getResource("logIn.css").toExternalForm());
 
 		loader.<LogInController>getController().init(primaryStage);
 

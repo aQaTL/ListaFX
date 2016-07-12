@@ -1,0 +1,35 @@
+.root
+{
+	-fx-background-color: #383838;
+}
+.label
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-font-size: 16pt;
+	-fx-text-fill: #FF423B;
+}
+.separator:horizontal .line 
+{
+    -fx-border-color: transparent transparent transparent transparent;
+}
+.progress-bar
+{
+	-fx-indeterminate-bar-animation-time: 1;
+}
+.progress-bar:indeterminate .bar 
+{
+	-fx-background-color: linear-gradient(to left, transparent, crimson);
+}
+.progress-bar .track 
+{
+	-fx-background-color: #616161; 
+}
+.text-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: cadetblue;
+	-fx-background-color: #616161;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 15;
+}
