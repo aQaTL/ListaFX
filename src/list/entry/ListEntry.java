@@ -105,7 +105,7 @@ public class ListEntry extends Entry
 
 	public String[] getSeriesSynonyms()
 	{
-		if(seriesSynonyms == null)
+		if (seriesSynonyms == null)
 			seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
 
 		return seriesSynonyms;
@@ -113,7 +113,7 @@ public class ListEntry extends Entry
 
 	public short getSeriesType()
 	{
-		if(seriesType == 0)
+		if (seriesType == 0)
 			seriesType = Short.parseShort(getStringFromElement("series_type"));
 
 		return seriesType;
@@ -131,7 +131,7 @@ public class ListEntry extends Entry
 
 	public short getSeriesStatus()
 	{
-		if(seriesStatus == 0)
+		if (seriesStatus == 0)
 			seriesStatus = Short.parseShort(getStringFromElement("series_status"));
 
 		return seriesStatus;
@@ -139,7 +139,7 @@ public class ListEntry extends Entry
 
 	public String getSeriesStart()
 	{
-		if(seriesStart == null)
+		if (seriesStart == null)
 			seriesStart = getStringFromElement("series_start");
 
 		return seriesStart;
@@ -147,7 +147,7 @@ public class ListEntry extends Entry
 
 	public String getSeriesEnd()
 	{
-		if(seriesEnd == null)
+		if (seriesEnd == null)
 			seriesEnd = getStringFromElement("series_end");
 
 		return seriesEnd;
@@ -160,7 +160,7 @@ public class ListEntry extends Entry
 
 	public int getMyID()
 	{
-		if(myID == 0)
+		if (myID == 0)
 			myID = Integer.parseInt(getStringFromElement("my_id"));
 
 		return myID;
@@ -178,7 +178,7 @@ public class ListEntry extends Entry
 
 	public String getMyStartDate()
 	{
-		if(myStartDate == null)
+		if (myStartDate == null)
 			myStartDate = getStringFromElement("my_start_date");
 
 		return myStartDate;
@@ -186,7 +186,7 @@ public class ListEntry extends Entry
 
 	public String getMyFinishDate()
 	{
-		if(myFinishDate == null)
+		if (myFinishDate == null)
 			myFinishDate = getStringFromElement("my_finish_date");
 
 		return myFinishDate;
@@ -214,7 +214,7 @@ public class ListEntry extends Entry
 
 	public int getMyRewatching()
 	{
-		if(myRewatching == 0)
+		if (myRewatching == 0)
 			myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
 
 		return myRewatching;
@@ -222,7 +222,7 @@ public class ListEntry extends Entry
 
 	public int getMyRewatchingEpisode()
 	{
-		if(myRewatchingEpisode == 0)
+		if (myRewatchingEpisode == 0)
 			myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
 
 		return myRewatchingEpisode;
@@ -230,7 +230,7 @@ public class ListEntry extends Entry
 
 	public String getMyLastUpdated()
 	{
-		if(myLastUpdated == null)
+		if (myLastUpdated == null)
 			myLastUpdated = getStringFromElement("my_last_updated");
 
 		return myLastUpdated;

@@ -53,7 +53,7 @@ public class SearchedEntry extends Entry
 
 	public String getEnglishTitle()
 	{
-		if(getEnglishTitle() == null)
+		if (getEnglishTitle() == null)
 			englishTitle = getStringFromElement("english");
 
 		return englishTitle;
@@ -61,7 +61,7 @@ public class SearchedEntry extends Entry
 
 	public String[] getSynonyms()
 	{
-		if(synonyms == null)
+		if (synonyms == null)
 			parseSynonyms(getStringFromElement("synonyms"));
 
 		return synonyms;
@@ -74,7 +74,7 @@ public class SearchedEntry extends Entry
 
 	public double getScore()
 	{
-		if(score == 0)
+		if (score == 0)
 			score = Double.parseDouble(getStringFromElement("score"));
 
 		return score;
@@ -87,7 +87,7 @@ public class SearchedEntry extends Entry
 
 	public String getStatus()
 	{
-		if(status == null)
+		if (status == null)
 			status = getStringFromElement("status");
 
 		return status;
@@ -95,7 +95,7 @@ public class SearchedEntry extends Entry
 
 	public String getStartDate()
 	{
-		if(startDate == null)
+		if (startDate == null)
 			startDate = getStringFromElement("start_date");
 
 		return startDate;
@@ -103,7 +103,7 @@ public class SearchedEntry extends Entry
 
 	public String getEndDate()
 	{
-		if(endDate == null)
+		if (endDate == null)
 			endDate = getStringFromElement("end_date");
 
 		return endDate;
@@ -111,7 +111,7 @@ public class SearchedEntry extends Entry
 
 	public String getSynopsis()
 	{
-		if(synopsis == null)
+		if (synopsis == null)
 			synopsis = getStringFromElement("synopsis");
 
 		return synopsis;
