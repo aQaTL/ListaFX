@@ -2,9 +2,6 @@ package list.entry;
 
 import javafx.scene.image.Image;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
-
-import java.util.ArrayList;
 
 /**
  * Created by Maciej on 2016-05-25.
