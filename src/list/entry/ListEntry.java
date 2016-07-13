@@ -45,22 +45,22 @@ public class ListEntry extends Entry
 	{
 		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));
 		seriesTitle = getStringFromElement("series_title");
-		seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
-		seriesType = Short.parseShort(getStringFromElement("series_type"));
+//		seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
+//		seriesType = Short.parseShort(getStringFromElement("series_type"));
 		seriesEpisodes = Integer.parseInt(getStringFromElement("series_episodes"));
-		seriesStatus = Short.parseShort(getStringFromElement("series_status"));
-		seriesStart = getStringFromElement("series_start");
-		seriesEnd = getStringFromElement("series_end");
+//		seriesStatus = Short.parseShort(getStringFromElement("series_status"));
+//		seriesStart = getStringFromElement("series_start");
+//		seriesEnd = getStringFromElement("series_end");
 		seriesImage = new Image(getStringFromElement("series_image"));
-		myID = Integer.parseInt(getStringFromElement("my_id"));
+//		myID = Integer.parseInt(getStringFromElement("my_id"));
 		myWatchedEpisodes = Integer.parseInt(getStringFromElement("my_watched_episodes"));
-		myStartDate = getStringFromElement("my_start_date");
-		myFinishDate = getStringFromElement("my_finish_date");
+//		myStartDate = getStringFromElement("my_start_date");
+//		myFinishDate = getStringFromElement("my_finish_date");
 		myScore = MyScoreEnum.getMyScoreEnum(getStringFromElement("my_score"));
 		myStatus = MyStatusEnum.getMyStatusEnum(getStringFromElement("my_status"));
-		myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
-		myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
-		myLastUpdated = getStringFromElement("my_last_updated");
+//		myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
+//		myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
+//		myLastUpdated = getStringFromElement("my_last_updated");
 
 		try
 		{
@@ -87,26 +87,6 @@ public class ListEntry extends Entry
 		return seriesTitle;
 	}
 
-	private String[] parseSynonyms(String synonyms)
-	{
-		ArrayList<String> synonymsArray = new ArrayList<>(5); //Usually entries doesn't have more than 5 synonyms
-
-		StringBuilder seriesSynonymBuilder = new StringBuilder();
-		for (char c : synonyms.toCharArray())
-		{
-			if (c != ';')
-			{
-				seriesSynonymBuilder.append(c);
-			}
-			else
-			{
-				synonymsArray.add(seriesSynonymBuilder.toString());
-				seriesSynonymBuilder = new StringBuilder();
-			}
-		}
-
-		return synonymsArray.toArray(new String[synonymsArray.size()]);
-	}
 
 	//====================
 	//GETTERS AND SETTERS
@@ -125,11 +105,17 @@ public class ListEntry extends Entry
 
 	public String[] getSeriesSynonyms()
 	{
+		if(seriesSynonyms == null)
+			seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
+
 		return seriesSynonyms;
 	}
 
 	public short getSeriesType()
 	{
+		if(seriesType == 0)
+			seriesType = Short.parseShort(getStringFromElement("series_type"));
+
 		return seriesType;
 	}
 
@@ -145,16 +131,25 @@ public class ListEntry extends Entry
 
 	public short getSeriesStatus()
 	{
+		if(seriesStatus == 0)
+			seriesStatus = Short.parseShort(getStringFromElement("series_status"));
+
 		return seriesStatus;
 	}
 
 	public String getSeriesStart()
 	{
+		if(seriesStart == null)
+			seriesStart = getStringFromElement("series_start");
+
 		return seriesStart;
 	}
 
 	public String getSeriesEnd()
 	{
+		if(seriesEnd == null)
+			seriesEnd = getStringFromElement("series_end");
+
 		return seriesEnd;
 	}
 
@@ -165,6 +160,9 @@ public class ListEntry extends Entry
 
 	public int getMyID()
 	{
+		if(myID == 0)
+			myID = Integer.parseInt(getStringFromElement("my_id"));
+
 		return myID;
 	}
 
@@ -180,11 +178,17 @@ public class ListEntry extends Entry
 
 	public String getMyStartDate()
 	{
+		if(myStartDate == null)
+			myStartDate = getStringFromElement("my_start_date");
+
 		return myStartDate;
 	}
 
 	public String getMyFinishDate()
 	{
+		if(myFinishDate == null)
+			myFinishDate = getStringFromElement("my_finish_date");
+
 		return myFinishDate;
 	}
 
@@ -210,16 +214,25 @@ public class ListEntry extends Entry
 
 	public int getMyRewatching()
 	{
+		if(myRewatching == 0)
+			myRewatching = Integer.parseInt(getStringFromElement("my_rewatching"));
+
 		return myRewatching;
 	}
 
 	public int getMyRewatchingEpisode()
 	{
+		if(myRewatchingEpisode == 0)
+			myRewatchingEpisode = Integer.parseInt(getStringFromElement("my_rewatching_ep"));
+
 		return myRewatchingEpisode;
 	}
 
 	public String getMyLastUpdated()
 	{
+		if(myLastUpdated == null)
+			myLastUpdated = getStringFromElement("my_last_updated");
+
 		return myLastUpdated;
 	}
 

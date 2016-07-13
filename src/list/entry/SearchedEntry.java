@@ -29,37 +29,16 @@ public class SearchedEntry extends Entry
 
 		id = Integer.parseInt(getStringFromElement("id"));
 		title = getStringFromElement("title");
-		englishTitle = getStringFromElement("english");
-		synonyms = parseSynonyms(getStringFromElement("synonyms"));
+//		englishTitle = getStringFromElement("english");
+//		synonyms = parseSynonyms(getStringFromElement("synonyms"));
 		episodes = Integer.parseInt(getStringFromElement("episodes"));
-		score = Double.parseDouble(getStringFromElement("score"));
+//		score = Double.parseDouble(getStringFromElement("score"));
 		type = getStringFromElement("type");
-		status = getStringFromElement("status");
-		startDate = getStringFromElement("start_date");
-		endDate = getStringFromElement("end_date");
-		synopsis = getStringFromElement("synopsis");
+//		status = getStringFromElement("status");
+//		startDate = getStringFromElement("start_date");
+//		endDate = getStringFromElement("end_date");
+//		synopsis = getStringFromElement("synopsis");
 		image = new Image(getStringFromElement("image"));
-	}
-
-	private String[] parseSynonyms(String synonyms)
-	{
-		ArrayList<String> synonymsArray = new ArrayList<>(5); //Usually entries doesn't have more than 5 synonyms
-
-		StringBuilder seriesSynonymBuilder = new StringBuilder();
-		for (char c : synonyms.toCharArray())
-		{
-			if (c != ';')
-			{
-				seriesSynonymBuilder.append(c);
-			}
-			else
-			{
-				synonymsArray.add(seriesSynonymBuilder.toString());
-				seriesSynonymBuilder = new StringBuilder();
-			}
-		}
-
-		return synonymsArray.toArray(new String[synonymsArray.size()]);
 	}
 
 	public int getId()
@@ -74,11 +53,17 @@ public class SearchedEntry extends Entry
 
 	public String getEnglishTitle()
 	{
+		if(getEnglishTitle() == null)
+			englishTitle = getStringFromElement("english");
+
 		return englishTitle;
 	}
 
 	public String[] getSynonyms()
 	{
+		if(synonyms == null)
+			parseSynonyms(getStringFromElement("synonyms"));
+
 		return synonyms;
 	}
 
@@ -89,6 +74,9 @@ public class SearchedEntry extends Entry
 
 	public double getScore()
 	{
+		if(score == 0)
+			score = Double.parseDouble(getStringFromElement("score"));
+
 		return score;
 	}
 
@@ -99,21 +87,33 @@ public class SearchedEntry extends Entry
 
 	public String getStatus()
 	{
+		if(status == null)
+			status = getStringFromElement("status");
+
 		return status;
 	}
 
 	public String getStartDate()
 	{
+		if(startDate == null)
+			startDate = getStringFromElement("start_date");
+
 		return startDate;
 	}
 
 	public String getEndDate()
 	{
+		if(endDate == null)
+			endDate = getStringFromElement("end_date");
+
 		return endDate;
 	}
 
 	public String getSynopsis()
 	{
+		if(synopsis == null)
+			synopsis = getStringFromElement("synopsis");
+
 		return synopsis;
 	}
 
