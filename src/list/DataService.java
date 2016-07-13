@@ -148,16 +148,22 @@ public class DataService
 		}
 	}
 
-	public void deleteEntryFromMAL(long id)
+	public boolean deleteEntryFromMAL(long id)
 	{
 		try
 		{
 			String address = malAddress + "api/animelist/delete/" + id + ".xml";
-			Jsoup.connect(address).header("Authorization", encodedLogin).get();
+			Document response = Jsoup.connect(address).header("Authorization", encodedLogin).get();
+
+			if (response.body().ownText().equals("Deleted"))
+				return true;
+
+			return false;
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
 	}
 

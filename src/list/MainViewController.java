@@ -1,11 +1,13 @@
 package list;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -14,12 +16,13 @@ import list.entry.MyScoreEnum;
 import list.entry.MyStatusEnum;
 import list.search.SearchController;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class MainViewController
 {
@@ -95,21 +98,34 @@ public class MainViewController
 	}
 
 	@FXML
-	private void updateEntryRemotely()
+	private void updateEntryRemotely() throws Exception
 	{
 		ListEntry entryToUpdate = entriesList.getSelectionModel().getSelectedItem();
 		entryToUpdate.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
 		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
 		entryToUpdate.setMyScore(myScoreBox.getSelectionModel().getSelectedItem());
 
-		if (service.updateEntryToMAL(entryToUpdate))
+		Task<Boolean> task = new Task<Boolean>()
 		{
-			System.out.println("Updated successfully.");
-		}
-		else
+			@Override
+			protected Boolean call() throws Exception
+			{
+				return service.updateEntryToMAL(entryToUpdate);
+			}
+		};
+		task.setOnSucceeded(workerState ->
 		{
-			System.err.println("Couldn't update");
-		}
+			try
+			{
+				if (task.get())
+					System.out.println("Updated successfully!");
+			}
+			catch (InterruptedException | ExecutionException e)
+			{
+				e.printStackTrace();
+			}
+		});
+		new Thread(task).start();
 	}
 
 	@FXML
@@ -186,9 +202,32 @@ public class MainViewController
 
 		if (alert.getResult().getButtonData().isDefaultButton())
 		{
-			service.deleteEntryFromMAL(entriesList.getSelectionModel().getSelectedItem().getSeriesDataBaseID());
-			service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
-			entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
+			Task<Boolean> deleteEntryTask = new Task<Boolean>()
+			{
+				@Override
+				protected Boolean call() throws Exception
+				{
+					return service.deleteEntryFromMAL(entriesList.getSelectionModel().getSelectedItem().getSeriesDataBaseID());
+				}
+			};
+
+			deleteEntryTask.setOnSucceeded(workerState ->
+			{
+				try
+				{
+					if (deleteEntryTask.get())
+					{
+						service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
+						entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
+					}
+				}
+				catch (InterruptedException | ExecutionException e)
+				{
+					e.printStackTrace();
+				}
+			});
+
+			new Thread(deleteEntryTask).start();
 		}
 	}
 
