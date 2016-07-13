@@ -98,7 +98,7 @@ public class MainViewController
 	}
 
 	@FXML
-	private void updateEntryRemotely() throws Exception
+	private void updateEntryRemotely()
 	{
 		ListEntry entryToUpdate = entriesList.getSelectionModel().getSelectedItem();
 		entryToUpdate.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));

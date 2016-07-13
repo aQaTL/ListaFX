@@ -1,0 +1,39 @@
+.root
+{
+	
+}
+.label
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: tomato;
+}
+.text-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: firebrick;
+	-fx-background-color: darkgray;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 10;
+}
+.button
+{
+	-fx-background-color: tomato;
+	-fx-background-radius: 12;
+	-fx-border-color: orangered;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+.button:hover
+{
+	
+}
+.button:armed
+{
+	
+}
+#seriesTitleLabel
+{
+	-fx-font-size: 13pt;
+}

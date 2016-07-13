@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="258.0" minWidth="237.0" prefHeight="370.0" prefWidth="237.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="258.0" minWidth="237.0" prefHeight="400.0" prefWidth="237.0" spacing="5.0" stylesheets="@ResultView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="seriesTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="42.0" maxWidth="228.0" minHeight="42.0" minWidth="179.0" prefHeight="42.0" prefWidth="179.0" text="Series tilte" textAlignment="CENTER" wrapText="true">
+      <Label id="seriesTitleLabel" fx:id="seriesTitleLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="68.0" maxWidth="228.0" minHeight="42.0" minWidth="179.0" prefHeight="68.0" prefWidth="188.0" text="Series tilte" textAlignment="CENTER" wrapText="true">
          <VBox.margin>
             <Insets left="5.0" right="5.0" />
          </VBox.margin></Label>

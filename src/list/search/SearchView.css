@@ -1,0 +1,39 @@
+.root
+{
+	-fx-background-color: #616161;
+}
+
+.border-pane
+{
+	-fx-background-color: #383838;
+}
+.scroll-pane
+{
+	-fx-background-color: #383838;
+}
+#resultsGrid
+{
+	-fx-background-color: #383838;
+	-fx-border-color: #383838;
+}
+.progress-bar
+{
+	-fx-indeterminate-bar-animation-time: 1.5;
+}
+.progress-bar:indeterminate .bar 
+{
+	-fx-background-color: linear-gradient(to left, transparent, crimson);
+}
+.progress-bar .track 
+{
+	-fx-background-color: #616161; 
+}
+.text-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: firebrick;
+	-fx-background-color: darkgray;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 15;
+}
