@@ -11,14 +11,17 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<GridPane stylesheets="@MainView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
+<GridPane prefHeight="632.0" prefWidth="974.0" stylesheets="@MainView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
@@ -27,13 +30,27 @@
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <SplitPane fx:id="splitPane" dividerPositions="0.4955456570155902" prefHeight="600.0" prefWidth="900.0" GridPane.rowIndex="1">
+      <SplitPane fx:id="splitPane" dividerPositions="0.5368763557483731" GridPane.rowIndex="1">
           <items>
-              <ListView fx:id="entriesList" onKeyReleased="#updateEntryDetails" onMouseClicked="#updateEntryDetails" prefHeight="200.0" prefWidth="200.0">
-                  <padding>
-                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                  </padding>
-              </ListView>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <TabPane prefHeight="41.0" prefWidth="441.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab fx:id="allTab" onSelectionChanged="#tabChanged" text="All" />
+                      <Tab fx:id="watchingTab" onSelectionChanged="#tabChanged" text="Watching" />
+                      <Tab fx:id="completedTab" onSelectionChanged="#tabChanged" text="Completed" />
+                        <Tab fx:id="onHoldTab" onSelectionChanged="#tabChanged" text="On hold" />
+                        <Tab fx:id="droppedTab" onSelectionChanged="#tabChanged" text="Dropped" />
+                        <Tab fx:id="planToWatchTab" onSelectionChanged="#tabChanged" text="Plan to watch" />
+                    </tabs>
+                  </TabPane>
+                    <ListView fx:id="entriesList" onKeyReleased="#updateEntryDetails" onMouseClicked="#updateEntryDetails" prefWidth="491.0" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        </padding>
+                    </ListView>
+               </children>
+            </VBox>
               <GridPane alignment="CENTER">
                   <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="243.0" />

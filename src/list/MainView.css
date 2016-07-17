@@ -38,6 +38,18 @@
 {
 	-fx-background-color: #383838;
 }
+.tab-pane:top .tab-header-area .tab-header-background
+{
+	-fx-background-color: linear-gradient(to bottom, #C43939, #AB2727);
+}
+.tab:top
+{
+	-fx-background-color: linear-gradient(to bottom, saddlebrown, tomato);
+}
+.tab:top .tab-container .tab-label
+{
+	-fx-text-fill: aliceblue;
+}
 .list-view 
 {
 	-fx-background-color: #383838;

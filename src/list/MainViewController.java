@@ -1,6 +1,7 @@
 package list;
 
 import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,17 +22,21 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class MainViewController
 {
 	private DataService service;
+	private String currentTabId;
 
 	public SplitPane splitPane;
 	//Left side components
 	@FXML
 	private ListView<ListEntry> entriesList;
+	@FXML
+	private Tab allTab;
 	//Right side components
 	@FXML
 	private Label seriesTitleLabel;
@@ -194,6 +199,9 @@ public class MainViewController
 	@FXML
 	private void deleteEntry()
 	{
+		if(entriesList.getSelectionModel().getSelectedItem() == null)
+			return;
+
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setHeaderText("Deleting " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle() + " from list");
 		alert.setContentText("Are you sure?");
@@ -253,5 +261,90 @@ public class MainViewController
 				showCustomWebsiteDialog();
 			}
 		});
+	}
+
+	@FXML
+	private void tabChanged(Event event)
+	{
+		String tabId = ((Tab) event.getSource()).getId();
+
+		if(!tabId.equals(currentTabId) && service != null)
+		{
+			currentTabId = tabId;
+			loadEntriesWithFilter();
+		}
+	}
+
+	private void loadEntriesWithFilter()
+	{
+		ArrayList<ListEntry> filteredEntries = new ArrayList<>(service.getEntries().size());
+		entriesList.getItems().clear();
+
+		switch (currentTabId)
+		{
+			case "allTab":
+			{
+				entriesList.getItems().addAll(service.getEntries());
+				break;
+			}
+			case "watchingTab":
+			{
+				service.getEntries().forEach(entry ->
+				{
+					if(entry.getMyStatus() == MyStatusEnum.WATCHING)
+						filteredEntries.add(entry);
+				});
+				entriesList.getItems().addAll(filteredEntries);
+
+				break;
+			}
+			case "completedTab":
+			{
+				service.getEntries().forEach(entry ->
+				{
+					if(entry.getMyStatus() == MyStatusEnum.COMPLETED)
+						filteredEntries.add(entry);
+				});
+				entriesList.getItems().addAll(filteredEntries);
+
+				break;
+			}
+			case "onHoldTab":
+			{
+				service.getEntries().forEach(entry ->
+				{
+					if(entry.getMyStatus() == MyStatusEnum.ONHOLD)
+						filteredEntries.add(entry);
+				});
+				entriesList.getItems().addAll(filteredEntries);
+
+				break;
+			}
+			case "droppedTab":
+			{
+				service.getEntries().forEach(entry ->
+				{
+					if(entry.getMyStatus() == MyStatusEnum.DROPPED)
+						filteredEntries.add(entry);
+				});
+				entriesList.getItems().addAll(filteredEntries);
+
+				break;
+			}
+			case "planToWatchTab":
+			{
+				service.getEntries().forEach(entry ->
+				{
+					if(entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
+						filteredEntries.add(entry);
+				});
+				entriesList.getItems().addAll(filteredEntries);
+
+				break;
+			}
+		}
+
+		entriesList.getSelectionModel().selectFirst();
+		updateEntryDetails();
 	}
 }
