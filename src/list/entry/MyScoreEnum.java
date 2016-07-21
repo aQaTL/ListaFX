@@ -9,7 +9,6 @@ public enum MyScoreEnum
 	FINE(6), GOOD(7), VERY_GOOD(8), GREAT(9), MASTERPIECE(10);
 
 	int score;
-	String description;
 
 	public static MyScoreEnum getMyScoreEnum(String score)
 	{
@@ -61,7 +60,7 @@ public enum MyScoreEnum
 	@Override
 	public String toString()
 	{
-		return "(" + score + ") " + super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase();
+		return "(" + score + ") " + (super.toString().substring(0, 1) + super.toString().substring(1).toLowerCase()).replaceAll("_", " ");
 	}
 
 	MyScoreEnum(int score)
