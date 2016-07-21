@@ -27,11 +27,11 @@
 }
 .button:hover
 {
-	
+	-fx-background-color: #FF8670;
 }
 .button:armed
 {
-	
+	-fx-background-color: #F25A3F;
 }
 #seriesTitleLabel
 {
