@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import list.DataService;
+import list.entry.EntryAddListener;
 import list.entry.SearchedEntry;
 
 /**
@@ -17,6 +18,7 @@ import list.entry.SearchedEntry;
 public class SearchController
 {
 	private DataService dataService;
+	private EntryAddListener entryAddListener;
 	private SearchService searchService;
 
 	@FXML private TextField searchField;
@@ -28,9 +30,10 @@ public class SearchController
 	 *
 	 * @param service
 	 */
-	public void init(DataService service)
+	public void init(DataService service, EntryAddListener entryAddListener)
 	{
 		this.dataService = service;
+		this.entryAddListener = entryAddListener;
 		searchService = new SearchService();
 
 		searchService.setOnRunning(event -> progressBar.setVisible(true));
@@ -66,6 +69,7 @@ public class SearchController
 			}
 
 			Result result = new Result(dataService, e);
+			result.addEntryAddListener(entryAddListener);
 			GridPane.setConstraints(result, column, row);
 			resultsGrid.getChildren().add(result);
 

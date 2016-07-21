@@ -124,7 +124,7 @@ public class DataService
 
 
 	//Adds new entry to user's list
-	public void addEntryToMAL(SearchedEntry entry, int initEpisode)
+	public ListEntry addEntryToMAL(SearchedEntry entry, int initEpisode)
 	{
 		try
 		{
@@ -139,13 +139,14 @@ public class DataService
 
 			if (addAnimeDocument.title().contains("Created"))
 			{
-				System.out.println("Added successfully");
+				return Entry.convertToListEntry(entry);
 			}
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public boolean deleteEntryFromMAL(long id)

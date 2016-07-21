@@ -14,16 +14,22 @@ public abstract class Entry
 
 	protected String getStringFromElement(String elementTag)
 	{
-		try
+		if(entry != null)
 		{
-			TextNode node = (TextNode) entry.getElementsByTag(elementTag).first().childNode(0);
-			return node.getWholeText();
+			try
+			{
+				TextNode node = (TextNode) entry.getElementsByTag(elementTag).first().childNode(0);
+				return node.getWholeText();
+			}
+			catch (IndexOutOfBoundsException e)
+			{
+				return "";
+			}
 		}
-		catch (IndexOutOfBoundsException e)
+		else
 		{
 			return "";
 		}
-
 	}
 
 	protected String[] parseSynonyms(String synonyms)
@@ -45,5 +51,30 @@ public abstract class Entry
 		}
 
 		return synonymsArray.toArray(new String[synonymsArray.size()]);
+	}
+
+	public static ListEntry convertToListEntry(SearchedEntry searchedEntry)
+	{
+		ListEntry listEntry = new ListEntry(null);
+		listEntry.setSeriesDataBaseID(searchedEntry.getId());
+		listEntry.setSeriesTitle(searchedEntry.getTitle());
+		listEntry.setSeriesSynonyms(searchedEntry.getSynonyms());
+//		listEntry.setSeriesType(searchedEntry.getType()); TODO implement SeriesTypeEnum
+		listEntry.setSeriesEpisodes(searchedEntry.getEpisodes());
+//		listEntry.setSeriesStatus(searchedEntry.getStatus()); TODO implement SeriesStatus
+		listEntry.setSeriesStart(searchedEntry.getStartDate());
+		listEntry.setSeriesEnd(searchedEntry.getEndDate());
+		listEntry.setSeriesImage(searchedEntry.getImage());
+		listEntry.setMyID(0);
+		listEntry.setMyWatchedEpisodes(0);
+		listEntry.setMyStartDate("0000-00-00");
+		listEntry.setMyFinishDate("0000-00-00");
+		listEntry.setMyScore(MyScoreEnum.NOT_RATED_YET);
+		listEntry.setMyStatus(MyStatusEnum.WATCHING);
+		listEntry.setMyRewatching(0);
+		listEntry.setMyRewatchingEpisode(0);
+		listEntry.setMyLastUpdated("0"); //Not sure about this
+
+		return listEntry;
 	}
 }

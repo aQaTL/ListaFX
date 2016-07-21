@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import list.entry.EntryAddListener;
 import list.entry.ListEntry;
 import list.entry.MyScoreEnum;
 import list.entry.MyStatusEnum;
@@ -181,10 +182,11 @@ public class MainViewController
 		{
 			FXMLLoader loader = new FXMLLoader(SearchController.class.getResource("SearchView.fxml"));
 
-			Parent parent = loader.load();
-			loader.<SearchController>getController().init(service);
-
 			Stage searchWindow = new Stage();
+
+			Parent parent = loader.load();
+			loader.<SearchController>getController().init(service, new EntryAddListenerImpl(searchWindow));
+
 			searchWindow.setTitle("Search for anime");
 			searchWindow.setScene(new Scene(parent));
 			searchWindow.showAndWait();
@@ -291,7 +293,7 @@ public class MainViewController
 			{
 				service.getEntries().forEach(entry ->
 				{
-					if(entry.getMyStatus() == MyStatusEnum.WATCHING)
+					if (entry.getMyStatus() == MyStatusEnum.WATCHING)
 						filteredEntries.add(entry);
 				});
 				entriesList.getItems().addAll(filteredEntries);
@@ -302,7 +304,7 @@ public class MainViewController
 			{
 				service.getEntries().forEach(entry ->
 				{
-					if(entry.getMyStatus() == MyStatusEnum.COMPLETED)
+					if (entry.getMyStatus() == MyStatusEnum.COMPLETED)
 						filteredEntries.add(entry);
 				});
 				entriesList.getItems().addAll(filteredEntries);
@@ -313,7 +315,7 @@ public class MainViewController
 			{
 				service.getEntries().forEach(entry ->
 				{
-					if(entry.getMyStatus() == MyStatusEnum.ONHOLD)
+					if (entry.getMyStatus() == MyStatusEnum.ONHOLD)
 						filteredEntries.add(entry);
 				});
 				entriesList.getItems().addAll(filteredEntries);
@@ -324,7 +326,7 @@ public class MainViewController
 			{
 				service.getEntries().forEach(entry ->
 				{
-					if(entry.getMyStatus() == MyStatusEnum.DROPPED)
+					if (entry.getMyStatus() == MyStatusEnum.DROPPED)
 						filteredEntries.add(entry);
 				});
 				entriesList.getItems().addAll(filteredEntries);
@@ -335,7 +337,7 @@ public class MainViewController
 			{
 				service.getEntries().forEach(entry ->
 				{
-					if(entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
+					if (entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
 						filteredEntries.add(entry);
 				});
 				entriesList.getItems().addAll(filteredEntries);
@@ -346,5 +348,23 @@ public class MainViewController
 
 		entriesList.getSelectionModel().selectFirst();
 		updateEntryDetails();
+	}
+
+	private class EntryAddListenerImpl implements EntryAddListener
+	{
+		Stage searchWindow;
+
+		private EntryAddListenerImpl(Stage stage)
+		{
+			searchWindow = stage;
+		}
+
+		@Override
+		public void entryAdded(ListEntry entry)
+		{
+			entriesList.getItems().add(entry);
+			service.getEntries().add(entry);
+			searchWindow.close();
+		}
 	}
 }

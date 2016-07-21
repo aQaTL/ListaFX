@@ -34,7 +34,8 @@ public class ListEntry extends Entry
 	{
 		this.entry = entry;
 
-		initFields();
+		if (entry != null)
+			initFields();
 	}
 
 	private void initFields()
@@ -245,5 +246,80 @@ public class ListEntry extends Entry
 	public void setWebsite(URL website)
 	{
 		this.website = website;
+	}
+
+	public void setSeriesDataBaseID(int seriesDataBaseID)
+	{
+		this.seriesDataBaseID = seriesDataBaseID;
+	}
+
+	public void setSeriesTitle(String seriesTitle)
+	{
+		this.seriesTitle = seriesTitle;
+	}
+
+	public void setSeriesSynonyms(String[] seriesSynonyms)
+	{
+		this.seriesSynonyms = seriesSynonyms;
+	}
+
+	public void setSeriesType(short seriesType)
+	{
+		this.seriesType = seriesType;
+	}
+
+	public void setSeriesStatus(short seriesStatus)
+	{
+		this.seriesStatus = seriesStatus;
+	}
+
+	public void setSeriesStart(String seriesStart)
+	{
+		this.seriesStart = seriesStart;
+	}
+
+	public void setSeriesEnd(String seriesEnd)
+	{
+		this.seriesEnd = seriesEnd;
+	}
+
+	public void setSeriesImage(Image seriesImage)
+	{
+		this.seriesImage = seriesImage;
+	}
+
+	public void setMyID(int myID)
+	{
+		this.myID = myID;
+	}
+
+	public void setMyStartDate(String myStartDate)
+	{
+		this.myStartDate = myStartDate;
+	}
+
+	public void setMyFinishDate(String myFinishDate)
+	{
+		this.myFinishDate = myFinishDate;
+	}
+
+	public void setMyRewatching(int myRewatching)
+	{
+		this.myRewatching = myRewatching;
+	}
+
+	public void setMyRewatchingEpisode(int myRewatchingEpisode)
+	{
+		this.myRewatchingEpisode = myRewatchingEpisode;
+	}
+
+	public void setMyLastUpdated(String myLastUpdated)
+	{
+		this.myLastUpdated = myLastUpdated;
+	}
+
+	public void setMyTags(String myTags)
+	{
+		this.myTags = myTags;
 	}
 }
