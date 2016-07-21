@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import list.entry.EntryAddListener;
 import list.entry.ListEntry;
 import list.entry.MyScoreEnum;
@@ -27,9 +28,14 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import tray.animations.AnimationType;
+import tray.notification.NotificationType;
+import tray.notification.TrayNotification;
+
 public class MainViewController
 {
 	private DataService service;
+	private TrayNotification tray;
 	private String currentTabId;
 
 	public SplitPane splitPane;
@@ -60,6 +66,10 @@ public class MainViewController
 	public void init(DataService service)
 	{
 		this.service = service;
+
+		tray = new TrayNotification();
+		tray.setTitle("ListaFX");
+		tray.setAnimationType(AnimationType.POPUP);
 
 		episodeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
 		myScoreBox.getItems().addAll(MyScoreEnum.values());
@@ -124,7 +134,11 @@ public class MainViewController
 			try
 			{
 				if (task.get())
-					System.out.println("Updated successfully!");
+				{
+					tray.setMessage("Entry has been updated");
+					tray.setNotificationType(NotificationType.SUCCESS);
+					tray.showAndDismiss(new Duration(2000));
+				}
 			}
 			catch (InterruptedException | ExecutionException e)
 			{
@@ -201,7 +215,7 @@ public class MainViewController
 	@FXML
 	private void deleteEntry()
 	{
-		if(entriesList.getSelectionModel().getSelectedItem() == null)
+		if (entriesList.getSelectionModel().getSelectedItem() == null)
 			return;
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -229,6 +243,9 @@ public class MainViewController
 					{
 						service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
 						entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
+						tray.setMessage("Entry has been deleted");
+						tray.setNotificationType(NotificationType.SUCCESS);
+						tray.showAndDismiss(new Duration(2000));
 					}
 				}
 				catch (InterruptedException | ExecutionException e)
@@ -270,7 +287,7 @@ public class MainViewController
 	{
 		String tabId = ((Tab) event.getSource()).getId();
 
-		if(!tabId.equals(currentTabId) && service != null)
+		if (!tabId.equals(currentTabId) && service != null)
 		{
 			currentTabId = tabId;
 			loadEntriesWithFilter();
@@ -362,6 +379,10 @@ public class MainViewController
 		@Override
 		public void entryAdded(ListEntry entry)
 		{
+			tray.setMessage("Entry has been added");
+			tray.setNotificationType(NotificationType.SUCCESS);
+			tray.showAndDismiss(new Duration(2000));
+
 			entriesList.getItems().add(entry);
 			service.getEntries().add(entry);
 			searchWindow.close();
