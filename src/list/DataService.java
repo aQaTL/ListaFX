@@ -21,7 +21,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * TODO write some javadoc here
+ * DataService object represents logged user account. This class provides basic operations on user MAL:
+ * getting user list,
+ * adding new entry,
+ * deleting entry.
+ * updating entry.
  *
  * @author maciej
  */
@@ -39,6 +43,14 @@ public class DataService
 	private ExecutorService parserThreadPool;
 	private boolean locked = false;
 
+	/**
+	 * Represents user account with correct credentials. If credentials aren't correct, throws IOException.
+	 * Then, downloads xml with user list and parses it to ArrayList of ListEntry
+	 *
+	 * @param encodedLogin used for authenticating operations on list
+	 * @param username user login
+	 * @throws IOException
+	 */
 	public DataService(String encodedLogin, String username) throws IOException
 	{
 		this.encodedLogin = encodedLogin;
@@ -123,7 +135,13 @@ public class DataService
 	}
 
 
-	//Adds new entry to user's list
+	/**
+	 * Tires to add given entry to MAL
+	 *
+	 * @param entry  that is about to be added
+	 * @param initEpisode initial episode
+	 * @return added ListEntry
+	 */
 	public ListEntry addEntryToMAL(SearchedEntry entry, int initEpisode)
 	{
 		try
@@ -149,6 +167,12 @@ public class DataService
 		return null;
 	}
 
+	/**
+	 * Tries to delete entry form MAL
+	 *
+	 * @param id of entry that you want delete
+	 * @return true if entry has been deleted successfully; otherwise false
+	 */
 	public boolean deleteEntryFromMAL(long id)
 	{
 		try
@@ -199,12 +223,23 @@ public class DataService
 		}
 	}
 
+	/**
+	 * Looks for given ListEntry and changes its website field
+	 *
+	 * @param entry the ListEntry, which website will be changed
+	 * @param website to store in given entry
+	 */
 	public void addCustomWebiste(ListEntry entry, URL website)
 	{
 		entries.get(entries.indexOf(entry)).setWebsite(website);
 		customURLs.put(entry.getSeriesDataBaseID(), website);
 	}
 
+	/**
+	 * Looks for customURLs.dat file in app dir.
+	 *
+	 * @return Either deserialized or new HashMap used to store customURls for MAL entries
+	 */
 	private HashMap<Integer, URL> loadCustomWebsites()
 	{
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("customURLs.dat")))
@@ -217,6 +252,9 @@ public class DataService
 		}
 	}
 
+	/**
+	 * Stores serialized list of user custom URLs (in app directory), since they aren't part of MAL.
+	 */
 	private void storeCustomWebsites()
 	{
 		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("customURLs.dat")))
