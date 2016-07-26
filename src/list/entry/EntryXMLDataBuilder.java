@@ -1,9 +1,9 @@
 package list.entry;
 
 /**
- * @author Maciej
- *
  * Helper class for generating xml data of ListEntry or SearchedEntry
+ *
+ * @author Maciej
  */
 public class EntryXMLDataBuilder
 {
@@ -16,36 +16,40 @@ public class EntryXMLDataBuilder
 		builder.append("<entry>");
 	}
 
-	public void addEpisode(int episode)
+	public EntryXMLDataBuilder addEpisode(int episode)
 	{
 		builder.append("<episode>");
 		builder.append(episode);
 		builder.append("</episode>");
+
+		return this;
 	}
 
-	public void addStatus(MyStatusEnum status)
+	public EntryXMLDataBuilder addStatus(MyStatusEnum status)
 	{
-		if(status != null)
+		if (status != null)
 		{
 			builder.append("<status>");
 			builder.append(status.getStatusNumber());
 			builder.append("</status>");
 		}
+		return this;
 	}
 
-	public void addScore(MyScoreEnum score)
+	public EntryXMLDataBuilder addScore(MyScoreEnum score)
 	{
-		if(score != null)
+		if (score != null)
 		{
 			builder.append("<score>");
 			builder.append(score.getScore());
 			builder.append("</score>");
 		}
+		return this;
 	}
 
-	public String getXML()
+	public StringBuilder build()
 	{
 		builder.append("</entry>");
-		return builder.toString();
+		return builder;
 	}
 }

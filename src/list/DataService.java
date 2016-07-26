@@ -148,12 +148,13 @@ public class DataService
 		{
 			String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
 
-			EntryXMLDataBuilder xmlDataBuilder = new EntryXMLDataBuilder();
-			xmlDataBuilder.addEpisode(initEpisode);
-			xmlDataBuilder.addStatus(MyStatusEnum.getMyStatusEnum("1"));
-			xmlDataBuilder.addScore(MyScoreEnum.getMyScoreEnum("0"));
+			StringBuilder xmlData = new EntryXMLDataBuilder()
+					.addEpisode(initEpisode)
+					.addStatus(MyStatusEnum.WATCHING)
+					.addScore(MyScoreEnum.NOT_RATED_YET)
+					.build();
 
-			Document addAnimeDocument = Jsoup.connect(address).data("data", xmlDataBuilder.getXML()).header("Authorization", encodedLogin).post();
+			Document addAnimeDocument = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
 
 			if (addAnimeDocument.title().contains("Created"))
 			{
@@ -202,14 +203,15 @@ public class DataService
 	{
 		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
 
-		EntryXMLDataBuilder xmlDataBuilder = new EntryXMLDataBuilder();
-		xmlDataBuilder.addEpisode(entry.getMyWatchedEpisodes());
-		xmlDataBuilder.addStatus(entry.getMyStatus());
-		xmlDataBuilder.addScore(entry.getMyScore());
+		StringBuilder xmlData = new EntryXMLDataBuilder()
+				.addEpisode(entry.getMyWatchedEpisodes())
+				.addStatus(entry.getMyStatus())
+				.addScore(entry.getMyScore())
+				.build();
 
 		try
 		{
-			Document response = Jsoup.connect(address).data("data", xmlDataBuilder.getXML()).header("Authorization", encodedLogin).post();
+			Document response = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
 
 			if (response.body().ownText().equals("Updated"))
 				return true;
