@@ -18,6 +18,7 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 /**
  * Created by Maciej on 2016-05-07.
@@ -65,6 +66,10 @@ public class LogInController
 			{
 				progressBar.setVisible(false);
 				errorLabel.setVisible(true);
+			}
+			else if(e instanceof SocketTimeoutException)
+			{
+				logInService.restart();
 			}
 			else
 				e.printStackTrace();
