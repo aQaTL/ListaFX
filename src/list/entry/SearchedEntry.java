@@ -3,6 +3,8 @@ package list.entry;
 import javafx.scene.image.Image;
 import org.jsoup.nodes.Element;
 
+import java.net.URL;
+
 /**
  * Created by Maciej on 2016-05-25.
  */
@@ -13,12 +15,13 @@ public class SearchedEntry extends Entry
 	private String[] synonyms;
 	private int episodes;
 	private double score;
-	private String type; //TODO Make this enum
+	private SeriesTypeEnum type;
 	private String status; //Here too
 	private String startDate; //TODO Maybe some kind of date class would be nice to use here
 	private String endDate; //Here too
 	private String synopsis;
 	private Image image;
+	private URL website;
 
 	public SearchedEntry(Element entry)
 	{
@@ -30,11 +33,11 @@ public class SearchedEntry extends Entry
 //		synonyms = parseSynonyms(getStringFromElement("synonyms"));
 		episodes = Integer.parseInt(getStringFromElement("episodes"));
 //		score = Double.parseDouble(getStringFromElement("score"));
-		type = getStringFromElement("type");
+		type = SeriesTypeEnum.valueOf(getStringFromElement("type").toUpperCase());
 //		status = getStringFromElement("status");
 //		startDate = getStringFromElement("start_date");
 //		endDate = getStringFromElement("end_date");
-//		synopsis = getStringFromElement("synopsis");
+		synopsis = getStringFromElement("synopsis");
 		image = new Image(getStringFromElement("image"));
 	}
 
@@ -50,7 +53,7 @@ public class SearchedEntry extends Entry
 
 	public String getEnglishTitle()
 	{
-		if (getEnglishTitle() == null)
+		if (englishTitle == null)
 			englishTitle = getStringFromElement("english");
 
 		return englishTitle;
@@ -77,7 +80,7 @@ public class SearchedEntry extends Entry
 		return score;
 	}
 
-	public String getType()
+	public SeriesTypeEnum getType()
 	{
 		return type;
 	}
@@ -117,5 +120,13 @@ public class SearchedEntry extends Entry
 	public Image getImage()
 	{
 		return image;
+	}
+
+	public URL getWebsite()
+	{
+		if(website == null)
+			website = super.getWebsite(id);
+
+		return website;
 	}
 }

@@ -1,57 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.web.WebView?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import org.controlsfx.control.GridView?>
+<?import org.controlsfx.control.HyperlinkLabel?>
+<?import org.controlsfx.control.MasterDetailPane?>
+<?import org.controlsfx.control.Rating?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="773.0" prefWidth="1062.0" stylesheets="@SearchView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.search.SearchController">
-    <top>
-        <HBox alignment="CENTER" prefHeight="43.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
-            <children>
-                <TextField fx:id="searchField" onKeyPressed="#search" prefHeight="31.0" prefWidth="356.0" />
-            </children>
-            <opaqueInsets>
-                <Insets />
-            </opaqueInsets>
-        </HBox>
-    </top>
-    <center>
-      <ScrollPane prefHeight="707.0" prefWidth="1058.0" BorderPane.alignment="CENTER">
-         <content>
-              <GridPane fx:id="resultsGrid" alignment="CENTER" prefHeight="4000.0" prefWidth="1040.0">
-                  <columnConstraints>
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                      <RowConstraints maxHeight="382.0" minHeight="10.0" prefHeight="378.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="374.0" minHeight="10.0" prefHeight="372.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-              </GridPane>
-         </content>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-      </ScrollPane>
-    </center>
-   <bottom>
-      <ProgressBar fx:id="progressBar" prefHeight="23.0" prefWidth="1061.0" visible="false" BorderPane.alignment="CENTER" />
-   </bottom>
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="247.0" minWidth="410.0"
+            prefHeight="773.0" prefWidth="1083.0" stylesheets="@SearchView.css" xmlns="http://javafx.com/javafx/8.0.60"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.search.SearchController">
+	<top>
+		<HBox alignment="CENTER" prefHeight="43.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
+			<children>
+				<TextField fx:id="searchField" onKeyPressed="#search" prefHeight="31.0" prefWidth="356.0"/>
+				<CheckComboBox fx:id="filterBox"/>
+			</children>
+			<opaqueInsets>
+				<Insets/>
+			</opaqueInsets>
+		</HBox>
+	</top>
+	<center>
+		<MasterDetailPane fx:id="masterDetailPane" animated="true" detailSide="RIGHT" dividerPosition="0.76"
+		                  showDetailNode="false">
+			<masterNode>
+				<ScrollPane fitToHeight="true" fitToWidth="true" minHeight="410" minWidth="247" prefHeight="707.0"
+				            prefWidth="1058.0" BorderPane.alignment="CENTER">
+					<BorderPane.margin>
+						<Insets/>
+					</BorderPane.margin>
+					<content>
+						<GridView fx:id="gridView" cellHeight="400.0" cellWidth="200.0" horizontalCellSpacing="0.0"
+						          verticalCellSpacing="0.0"/>
+					</content>
+				</ScrollPane>
+			</masterNode>
+			<detailNode>
+				<GridPane fx:id="detailsPane" alignment="TOP_CENTER">
+					<columnConstraints>
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="91.0" minWidth="10.0" prefWidth="80.0"/>
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="173.0" minWidth="10.0" prefWidth="119.0"/>
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="51.0"/>
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints maxHeight="108.0" minHeight="0.0" prefHeight="68.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="349.0" minHeight="10.0" prefHeight="257.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="180.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="180.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="116.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="123.0" minHeight="7.0" prefHeight="33.0" vgrow="SOMETIMES"/>
+						<RowConstraints maxHeight="237.0" minHeight="10.0" prefHeight="232.0" vgrow="SOMETIMES"/>
+					</rowConstraints>
+					<children>
+						<Label id="title" fx:id="seriesTitleLabel" alignment="CENTER" prefHeight="68.0"
+						       prefWidth="231.0" text="Series title" textAlignment="CENTER" wrapText="true"
+						       GridPane.columnSpan="2"/>
+						<Rating fx:id="score" max="10" orientation="VERTICAL" partialRating="true" prefHeight="318.0"
+						        prefWidth="32.0" rating="0.0" GridPane.columnIndex="2" GridPane.halignment="CENTER"
+						        GridPane.rowIndex="1" GridPane.rowSpan="4" GridPane.valignment="TOP"/>
+						<ImageView fx:id="seriesImage" fitHeight="258.0" fitWidth="143.0" pickOnBounds="true"
+						           preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER"
+						           GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER"
+						           GridPane.vgrow="ALWAYS">
+							<GridPane.margin>
+								<Insets left="30.0"/>
+							</GridPane.margin>
+						</ImageView>
+						<HyperlinkLabel fx:id="websiteLabel" maxHeight="20.0" maxWidth="122.0" minHeight="20.0"
+						                minWidth="122.0" onAction="#openWebsite" prefHeight="20.0" prefWidth="122.0"
+						                text="[Open in browser]" GridPane.columnSpan="2" GridPane.halignment="CENTER"
+						                GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
+						<Label text="Episodes:" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS"
+						       GridPane.rowIndex="3" GridPane.valignment="CENTER">
+							<GridPane.margin>
+								<Insets right="5.0"/>
+							</GridPane.margin>
+						</Label>
+						<Label fx:id="episodesLabel" text="episodesNumber" GridPane.columnIndex="1"
+						       GridPane.rowIndex="3"/>
+						<Label text="Series start:" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS"
+						       GridPane.rowIndex="5" GridPane.valignment="CENTER">
+							<GridPane.margin>
+								<Insets right="5.0"/>
+							</GridPane.margin>
+						</Label>
+						<Label text="Series end:" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS"
+						       GridPane.rowIndex="6" GridPane.valignment="CENTER">
+							<GridPane.margin>
+								<Insets right="5.0"/>
+							</GridPane.margin>
+						</Label>
+						<Label fx:id="seriesStart" text="startDate" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+						<Label fx:id="seriesEnd" text="endDate" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+						<Label text="Status: " GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS"
+						       GridPane.rowIndex="4">
+							<GridPane.margin>
+								<Insets right="5.0"/>
+							</GridPane.margin>
+						</Label>
+						<Label fx:id="statusLabel" text="status" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+						<ScrollPane GridPane.columnSpan="3" GridPane.rowIndex="7">
+							<content>
+								<WebView fx:id="synopsis" prefHeight="229.0" prefWidth="250.0"/>
+							</content>
+						</ScrollPane>
+						<Button fx:id="addButton" mnemonicParsing="false" onAction="#add" prefHeight="68.0"
+						        prefWidth="55.0" text="Add" GridPane.columnIndex="2"/>
+					</children>
+				</GridPane>
+			</detailNode>
+		</MasterDetailPane>
+	</center>
+	<bottom>
+		<ProgressBar fx:id="progressBar" visible="false" BorderPane.alignment="CENTER"/>
+	</bottom>
 </BorderPane>

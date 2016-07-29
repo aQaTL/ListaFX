@@ -11,7 +11,7 @@ public class ListEntry extends Entry
 	private int seriesDataBaseID;
 	private String seriesTitle;
 	private String[] seriesSynonyms;
-	private short seriesType;
+	private SeriesTypeEnum seriesType;
 	private int seriesEpisodes;
 	private short seriesStatus;
 	private String seriesStart;
@@ -68,14 +68,7 @@ public class ListEntry extends Entry
 			myTags = "";
 		}
 
-		try
-		{
-			website = new URL("http://myanimelist.net/anime/" + seriesDataBaseID + "/");
-		}
-		catch (MalformedURLException e)
-		{
-			e.printStackTrace();
-		}
+		website = super.getWebsite(seriesDataBaseID);
 	}
 
 	@Override
@@ -108,10 +101,10 @@ public class ListEntry extends Entry
 		return seriesSynonyms;
 	}
 
-	public short getSeriesType()
+	public SeriesTypeEnum getSeriesType()
 	{
-		if (seriesType == 0)
-			seriesType = Short.parseShort(getStringFromElement("series_type"));
+		if (seriesType == null)
+			seriesType = SeriesTypeEnum.valueOf(Integer.parseInt(getStringFromElement("series_type")));
 
 		return seriesType;
 	}
@@ -263,7 +256,7 @@ public class ListEntry extends Entry
 		this.seriesSynonyms = seriesSynonyms;
 	}
 
-	public void setSeriesType(short seriesType)
+	public void setSeriesType(SeriesTypeEnum seriesType)
 	{
 		this.seriesType = seriesType;
 	}

@@ -2,7 +2,6 @@
 {
 	-fx-background-color: #616161;
 }
-
 .border-pane
 {
 	-fx-background-color: #383838;
@@ -11,7 +10,7 @@
 {
 	-fx-background-color: #383838;
 }
-#resultsGrid
+.grid-view
 {
 	-fx-background-color: #383838;
 	-fx-border-color: #383838;
@@ -36,4 +35,89 @@
 	-fx-background-radius: 15;
 	-fx-border-color: crimson crimson crimson crimson;
 	-fx-border-radius: 15;
+}
+#filterBox .combo-box .list-view 
+{
+	-fx-background-color: #383838;
+	-fx-font-size: 12pt;
+}
+#filterBox .combo-box .list-cell
+{
+	-fx-background-color: #454545;
+	-fx-text-fill: #FC804E;
+}
+#filterBox .combo-box .list-view:focused .list-cell:focused
+{
+	-fx-background-color: tomato, black, firebrick;
+	-fx-text-fill: #FFFACD;
+}
+#filterBox .combo-box .arrow-button
+{
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 5;
+}
+#filterBox .combo-box .arrow-button .arrow
+{
+	-fx-background-color: crimson;
+}
+.label
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: tomato;
+}
+.split-pane *.split-pane-divider 
+{
+	-fx-background-color: #ED3D37;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
+.web-view .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.web-view .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.web-view .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
+#detailsPane
+{
+	-fx-background-color: #414141;
+}
+#title
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: #FC4242;
+	-fx-font-size: 13pt;
+}
+#addButton
+{
+	-fx-background-color: #FC4242;
+	-fx-background-radius: 12;
+	-fx-border-color: orangered;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+#addButton:hover
+{
+	-fx-background-color: #FF8670;
+}
+#addButton:armed
+{
+	-fx-background-color: #F25A3F;
 }

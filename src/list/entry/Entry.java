@@ -3,6 +3,8 @@ package list.entry;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -51,6 +53,19 @@ public abstract class Entry
 		}
 
 		return synonymsArray.toArray(new String[synonymsArray.size()]);
+	}
+
+	protected URL getWebsite(int seriesDataBaseID)
+	{
+		try
+		{
+			return new URL("http://myanimelist.net/anime/" + seriesDataBaseID + "/");
+		}
+		catch (MalformedURLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static ListEntry convertToListEntry(SearchedEntry searchedEntry)

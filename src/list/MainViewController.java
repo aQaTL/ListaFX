@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -18,6 +19,7 @@ import list.entry.ListEntry;
 import list.entry.MyScoreEnum;
 import list.entry.MyStatusEnum;
 import list.search.SearchController;
+import org.controlsfx.control.Notifications;
 
 import java.awt.*;
 import java.io.IOException;
@@ -28,15 +30,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import tray.animations.AnimationType;
-import tray.notification.NotificationType;
-import tray.notification.TrayNotification;
-
 public class MainViewController
 {
 	private DataService service;
-	private TrayNotification tray;
+	private Notifications notify;
 	private String currentTabId;
+
+	private String notifyAddMsg = "Entry has been added";
+	private String notifyDeleteMsg = "Entry has been deleted";
+	private String notifyUpdateMsg = "Entry has been updated";
 
 	public SplitPane splitPane;
 	//Left side components
@@ -67,9 +69,10 @@ public class MainViewController
 	{
 		this.service = service;
 
-		tray = new TrayNotification();
-		tray.setTitle("ListaFX");
-		tray.setAnimationType(AnimationType.POPUP);
+		notify = Notifications.create()
+				.title("ListaFX")
+				.position(Pos.TOP_RIGHT)
+				.hideAfter(new Duration(1500));
 
 		episodeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
 		myScoreBox.getItems().addAll(MyScoreEnum.values());
@@ -135,9 +138,7 @@ public class MainViewController
 			{
 				if (task.get())
 				{
-					tray.setMessage("Entry has been updated");
-					tray.setNotificationType(NotificationType.SUCCESS);
-					tray.showAndDismiss(new Duration(2000));
+					notify.text(notifyUpdateMsg).showInformation();
 				}
 			}
 			catch (InterruptedException | ExecutionException e)
@@ -196,12 +197,13 @@ public class MainViewController
 		{
 			FXMLLoader loader = new FXMLLoader(SearchController.class.getResource("SearchView.fxml"));
 
-			Stage searchWindow = new Stage();
-
 			Parent parent = loader.load();
-			loader.<SearchController>getController().init(service, new EntryAddListenerImpl(searchWindow));
+			loader.<SearchController>getController().init(service, new EntryAddListenerImpl());
 
+			Stage searchWindow = new Stage();
 			searchWindow.setTitle("Search for anime");
+			searchWindow.setMinWidth(428);
+			searchWindow.setMinHeight(540);
 			searchWindow.setScene(new Scene(parent));
 			searchWindow.showAndWait();
 		}
@@ -243,9 +245,8 @@ public class MainViewController
 					{
 						service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
 						entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
-						tray.setMessage("Entry has been deleted");
-						tray.setNotificationType(NotificationType.SUCCESS);
-						tray.showAndDismiss(new Duration(2000));
+
+						notify.text(notifyDeleteMsg).showInformation();
 					}
 				}
 				catch (InterruptedException | ExecutionException e)
@@ -369,23 +370,13 @@ public class MainViewController
 
 	private class EntryAddListenerImpl implements EntryAddListener
 	{
-		Stage searchWindow;
-
-		private EntryAddListenerImpl(Stage stage)
-		{
-			searchWindow = stage;
-		}
-
 		@Override
 		public void entryAdded(ListEntry entry)
 		{
-			tray.setMessage("Entry has been added");
-			tray.setNotificationType(NotificationType.SUCCESS);
-			tray.showAndDismiss(new Duration(2000));
-
 			entriesList.getItems().add(entry);
 			service.getEntries().add(entry);
-			searchWindow.close();
+
+			notify.text(notifyAddMsg).showInformation();
 		}
 	}
 }
