@@ -5,7 +5,7 @@ package list.entry;
  */
 public enum SeriesTypeEnum
 {
-	TV(1), OVA(2), MOVIE(3), SPECIAL(4);
+	TV(1), OVA(2), MOVIE(3), SPECIAL(4), ONA(5);
 
 	private int n;
 
@@ -21,6 +21,8 @@ public enum SeriesTypeEnum
 				return MOVIE;
 			case 4:
 				return SPECIAL;
+			case 5:
+				return ONA;
 
 			default:
 				return null;

@@ -119,10 +119,12 @@ public class DataService
 			}
 			catch (IOException e)
 			{
+				e.printStackTrace();
 				return new SearchedEntry[0];
 			}
 			catch (InterruptedException | ExecutionException e)
 			{
+				e.printStackTrace();
 			}
 			finally
 			{
