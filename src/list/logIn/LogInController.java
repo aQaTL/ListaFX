@@ -116,6 +116,11 @@ public class LogInController
 		Alert warning = new Alert(Alert.AlertType.CONFIRMATION, "Confirm exit", ButtonType.YES, ButtonType.NO);
 		warning.setHeaderText("Quit program?");
 		warning.setContentText("Are you sure you want to exit?");
+
+		DialogPane alertPane = warning.getDialogPane();
+		alertPane.getStylesheets().add(MainViewController.class.getResource("Alert.css").toExternalForm());
+		alertPane.getStyleClass().add("myAlert");
+
 		warning.showAndWait();
 
 		if (warning.getResult() == ButtonType.YES)

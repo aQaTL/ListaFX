@@ -224,6 +224,11 @@ public class MainViewController
 		alert.setHeaderText("Deleting " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle() + " from list");
 		alert.setContentText("Are you sure?");
 		alert.setTitle("Confirm");
+
+		DialogPane alertPane = alert.getDialogPane();
+		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
+		alertPane.getStyleClass().add("myAlert");
+
 		alert.showAndWait();
 
 		if (alert.getResult().getButtonData().isDefaultButton())
@@ -265,6 +270,10 @@ public class MainViewController
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Set custom website");
 		dialog.setHeaderText("Set custom website for " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle());
+
+		DialogPane alertPane = dialog.getDialogPane();
+		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
+		alertPane.getStyleClass().add("myAlert");
 
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(url ->
