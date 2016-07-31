@@ -117,12 +117,7 @@ public class DataService
 				System.out.println(System.currentTimeMillis() - milis);
 				return entriesArray;
 			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-				return new SearchedEntry[0];
-			}
-			catch (InterruptedException | ExecutionException e)
+			catch (IOException | InterruptedException | ExecutionException e)
 			{
 				e.printStackTrace();
 			}
@@ -130,10 +125,8 @@ public class DataService
 			{
 				locked = false;
 			}
-			return new SearchedEntry[0];
 		}
-		else
-			return new SearchedEntry[0];
+		return new SearchedEntry[0];
 	}
 
 
