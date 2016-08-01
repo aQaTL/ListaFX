@@ -130,6 +130,9 @@ public class LogInController
 		}
 	}
 
+	/**
+	 * Service for validating user credentials and loading DataService
+	 */
 	private class LogInService extends Service<DataService>
 	{
 		@Override

@@ -298,14 +298,8 @@ public class DataService
 		}
 	}
 
-	private String readPassword()
+	private String loadCredentials()
 	{
 		return null;
-	}
-
-
-	private void createXMLData(ListEntry entry)
-	{
-
 	}
 }

@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Represents application main window
+ */
 public class MainViewController
 {
 	private DataService service;
@@ -96,6 +99,9 @@ public class MainViewController
 		updateEntryDetails();
 	}
 
+	/**
+	 * Refreshes entry details side to match currently selected entry
+	 */
 	@FXML
 	public void updateEntryDetails()
 	{
@@ -116,6 +122,9 @@ public class MainViewController
 		}
 	}
 
+	/**
+	 * Creates task that updates currently selected entry in user MAL
+	 */
 	@FXML
 	private void updateEntryRemotely()
 	{
@@ -149,6 +158,9 @@ public class MainViewController
 		new Thread(task).start();
 	}
 
+	/**
+	 * Opens selectedEntry website in default browser
+	 */
 	@FXML
 	private void openWebsite()
 	{
@@ -190,6 +202,9 @@ public class MainViewController
 		}
 	}
 
+	/**
+	 * Shows SearchView window that allows browse and add entries
+	 */
 	@FXML
 	private void addEntry()
 	{
@@ -213,7 +228,9 @@ public class MainViewController
 		}
 	}
 
-
+	/**
+	 * Shows deleting alert, if user confirms, creates task that deletes selected entry from MAL
+	 */
 	@FXML
 	private void deleteEntry()
 	{
@@ -264,6 +281,10 @@ public class MainViewController
 		}
 	}
 
+	/**
+	 * Shows dialog that allows to set custom website to selected entry.
+	 * Custom websites are stored in app directory in customURLs.dat file.
+	 */
 	@FXML
 	private void showCustomWebsiteDialog()
 	{
@@ -304,6 +325,11 @@ public class MainViewController
 		}
 	}
 
+	/**
+	 * Adjust currently showing entries in entriesList to match currently selected tab
+	 *
+	 * TODO use ObservableList
+	 */
 	private void loadEntriesWithFilter()
 	{
 		ArrayList<ListEntry> filteredEntries = new ArrayList<>(service.getEntries().size());
@@ -377,6 +403,9 @@ public class MainViewController
 		updateEntryDetails();
 	}
 
+	/**
+	 * Defines action that is fired after successfully adding new entry
+	 */
 	private class EntryAddListenerImpl implements EntryAddListener
 	{
 		@Override

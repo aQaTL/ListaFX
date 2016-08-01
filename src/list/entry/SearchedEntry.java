@@ -6,6 +6,8 @@ import org.jsoup.nodes.Element;
 import java.net.URL;
 
 /**
+ * This class represents single entry of search results
+ *
  * Created by Maciej on 2016-05-25.
  */
 public class SearchedEntry extends Entry

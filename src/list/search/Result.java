@@ -13,6 +13,8 @@ import list.entry.SearchedEntry;
 import java.io.IOException;
 
 /**
+ * Represents single searchResult as VBox with some info about it
+ *
  * Created by Maciej on 2016-06-17.
  */
 public class Result extends VBox

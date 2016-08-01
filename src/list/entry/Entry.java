@@ -14,12 +14,18 @@ public abstract class Entry
 {
 	protected Element entry;
 
+	/**
+	 * Gets String value of first given elementTag children node
+	 *
+	 * @param elementTag name of tag
+	 */
 	protected String getStringFromElement(String elementTag)
 	{
 		if(entry != null)
 		{
 			try
 			{
+				entry.children().get(0).childNode(0);
 				TextNode node = (TextNode) entry.getElementsByTag(elementTag).first().childNode(0);
 				return node.getWholeText();
 			}
@@ -34,6 +40,10 @@ public abstract class Entry
 		}
 	}
 
+	/**
+	 * Parses synonyms that are separated by semicolon
+	 * @return array of synonyms
+	 */
 	protected String[] parseSynonyms(String synonyms)
 	{
 		ArrayList<String> synonymsArray = new ArrayList<>(5); //Usually entries doesn't have more than 5 synonyms
@@ -55,6 +65,9 @@ public abstract class Entry
 		return synonymsArray.toArray(new String[synonymsArray.size()]);
 	}
 
+	/**
+	 * @return URL to MAL anime website based on its unique id
+	 */
 	protected URL getWebsite(int seriesDataBaseID)
 	{
 		try
@@ -68,13 +81,17 @@ public abstract class Entry
 		}
 	}
 
+	/**
+	 * Coverts given searched entry to ListEntry
+	 * Values, that don't exist in SearchedEntry are set to default values
+	 */
 	public static ListEntry convertToListEntry(SearchedEntry searchedEntry)
 	{
 		ListEntry listEntry = new ListEntry(null);
 		listEntry.setSeriesDataBaseID(searchedEntry.getId());
 		listEntry.setSeriesTitle(searchedEntry.getTitle());
 		listEntry.setSeriesSynonyms(searchedEntry.getSynonyms());
-//		listEntry.setSeriesType(searchedEntry.getType()); TODO implement SeriesTypeEnum
+		listEntry.setSeriesType(searchedEntry.getType());
 		listEntry.setSeriesEpisodes(searchedEntry.getEpisodes());
 //		listEntry.setSeriesStatus(searchedEntry.getStatus()); TODO implement SeriesStatus
 		listEntry.setSeriesStart(searchedEntry.getStartDate());

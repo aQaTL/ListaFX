@@ -9,6 +9,8 @@ import java.util.concurrent.Callable;
 
 
 /**
+ * Helper class for parsing user MAL
+ *
  * Created by maciej on 6/24/16.
  */
 public class EntryParser implements Callable<Entry>

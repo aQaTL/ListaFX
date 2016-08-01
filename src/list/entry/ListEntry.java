@@ -3,9 +3,11 @@ package list.entry;
 import javafx.scene.image.Image;
 import org.jsoup.nodes.Element;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * This class represents a single entry of user MAL
+ */
 public class ListEntry extends Entry
 {
 	private int seriesDataBaseID;
@@ -38,6 +40,9 @@ public class ListEntry extends Entry
 			initFields();
 	}
 
+	/**
+	 * Initializes the most frequently used ListEntry fields
+	 */
 	private void initFields()
 	{
 		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));

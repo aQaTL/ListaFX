@@ -119,6 +119,9 @@ public class SearchController
 		synopsis.getEngine().setUserStyleSheetLocation(getClass().getResource("WebViewStyle.css").toString());
 	}
 
+	/**
+	 * Resets searchService when user presses enter in searchField
+	 */
 	@FXML
 	private void search(KeyEvent event)
 	{
@@ -126,6 +129,9 @@ public class SearchController
 			searchService.restart();
 	}
 
+	/**
+	 * Shows search results in gridView
+	 */
 	public void showSearchResults(SearchedEntry[] searchedEntries)
 	{
 		allResults = new Result[searchedEntries.length];
@@ -141,6 +147,9 @@ public class SearchController
 		filterResults();
 	}
 
+	/**
+	 * Opens selectedEntry website in default browser
+	 */
 	@FXML
 	private void openWebsite(Event event) throws IOException, URISyntaxException
 	{
@@ -148,6 +157,10 @@ public class SearchController
 			Desktop.getDesktop().browse(selectedEntry.getWebsite().toURI());
 	}
 
+	/**
+	 * Either shows or hides detailNode based on it actual state
+	 * and refreshes it components values
+	 */
 	private void showDetails(Result result)
 	{
 		if (masterDetailPane.isShowDetailNode() && result.getEntry() == selectedEntry)
@@ -162,6 +175,9 @@ public class SearchController
 		updateDetails();
 	}
 
+	/**
+	 * Changes detailNode components values to match selectedEntry properties
+	 */
 	private void updateDetails()
 	{
 		seriesTitleLabel.setText(selectedEntry.getTitle());
@@ -174,6 +190,10 @@ public class SearchController
 		synopsis.getEngine().loadContent(selectedEntry.getSynopsis());
 	}
 
+	/**
+	 * Filters displayed results based on selected
+	 * checkboxes in filterBox
+	 */
 	private void filterResults()
 	{
 		displayedResults.setAll(allResults);
@@ -189,7 +209,8 @@ public class SearchController
 	}
 
 	/**
-	 * Action for addButton Button
+	 * Creates task that adds selectedEntry to MAL
+	 * and executes it in new thread
 	 */
 	@FXML
 	private void add()
@@ -223,6 +244,9 @@ public class SearchController
 		new Thread(addEntryTask).start();
 	}
 
+	/**
+	 * Service for executing searching for entries task in separate thread
+	 */
 	private class SearchService extends Service<SearchedEntry[]>
 	{
 		@Override
@@ -239,6 +263,9 @@ public class SearchController
 		}
 	}
 
+	/**
+	 * Class for displaying Result in gridView
+	 */
 	private class ResultCell extends GridCell<Result>
 	{
 		@Override
