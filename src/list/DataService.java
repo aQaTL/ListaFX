@@ -1,13 +1,14 @@
 package list;
 
+import javafx.concurrent.Task;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import list.entry.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -48,7 +48,7 @@ public class DataService
 	 * Then, downloads xml with user list and parses it to ArrayList of ListEntry
 	 *
 	 * @param encodedLogin used for authenticating operations on list
-	 * @param username user login
+	 * @param username     user login
 	 * @throws IOException
 	 */
 	public DataService(String encodedLogin, String username) throws IOException
@@ -86,13 +86,13 @@ public class DataService
 	 * @param seriesTitle title of the sought anime
 	 * @return array of ListEntry that have been found
 	 */
-	public SearchedEntry[] searchForEntries(String seriesTitle)
+	public Task<SearchedEntry[]> searchForEntries(String seriesTitle)
 	{
-		if (!locked)
+		return new Task<SearchedEntry[]>()
 		{
-			try
+			@Override
+			protected SearchedEntry[] call() throws Exception
 			{
-				locked = true;
 
 				String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
 
@@ -117,50 +117,40 @@ public class DataService
 				System.out.println(System.currentTimeMillis() - milis);
 				return entriesArray;
 			}
-			catch (IOException | InterruptedException | ExecutionException e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				locked = false;
-			}
-		}
-		return new SearchedEntry[0];
+		};
 	}
 
 
 	/**
 	 * Tires to add given entry to MAL
 	 *
-	 * @param entry  that is about to be added
+	 * @param entry       that is about to be added
 	 * @param initEpisode initial episode
 	 * @return added ListEntry
 	 */
-	public ListEntry addEntryToMAL(SearchedEntry entry, int initEpisode)
+	public Task<ListEntry> addEntryToMAL(SearchedEntry entry, int initEpisode)
 	{
-		try
+		return new Task<ListEntry>()
 		{
-			String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
-
-			StringBuilder xmlData = new EntryXMLDataBuilder()
-					.addEpisode(initEpisode)
-					.addStatus(MyStatusEnum.WATCHING)
-					.addScore(MyScoreEnum.NOT_RATED_YET)
-					.build();
-
-			Document addAnimeDocument = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
-
-			if (addAnimeDocument.title().contains("Created"))
+			@Override
+			protected ListEntry call() throws Exception
 			{
-				return Entry.convertToListEntry(entry);
+				String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
+
+				StringBuilder xmlData = new EntryXMLDataBuilder()
+						.addEpisode(initEpisode)
+						.addStatus(MyStatusEnum.WATCHING)
+						.addScore(MyScoreEnum.NOT_RATED_YET)
+						.build();
+
+				Document addAnimeDocument = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
+
+				if (addAnimeDocument.title().contains("Created"))
+					return Entry.convertToListEntry(entry);
+
+				return null;
 			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		};
 	}
 
 	/**
@@ -169,23 +159,22 @@ public class DataService
 	 * @param id of entry that you want delete
 	 * @return true if entry has been deleted successfully; otherwise false
 	 */
-	public boolean deleteEntryFromMAL(long id)
+	public Task<Boolean> deleteEntryFromMAL(long id)
 	{
-		try
+		return new Task<Boolean>()
 		{
-			String address = malAddress + "api/animelist/delete/" + id + ".xml";
-			Document response = Jsoup.connect(address).header("Authorization", encodedLogin).get();
+			@Override
+			protected Boolean call() throws Exception
+			{
+				String address = malAddress + "api/animelist/delete/" + id + ".xml";
+				Document response = Jsoup.connect(address).header("Authorization", encodedLogin).get();
 
-			if (response.body().ownText().equals("Deleted"))
-				return true;
+				if (response.body().ownText().equals("Deleted"))
+					return true;
 
-			return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
-		}
+				return false;
+			}
+		};
 	}
 
 	/**
@@ -194,36 +183,35 @@ public class DataService
 	 * @param entry to update
 	 * @return true if server returns "Updated"
 	 */
-	public boolean updateEntryToMAL(ListEntry entry)
+	public Task<Boolean> updateEntryToMAL(ListEntry entry)
 	{
-		String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
-
-		StringBuilder xmlData = new EntryXMLDataBuilder()
-				.addEpisode(entry.getMyWatchedEpisodes())
-				.addStatus(entry.getMyStatus())
-				.addScore(entry.getMyScore())
-				.build();
-
-		try
+		return new Task<Boolean>()
 		{
-			Document response = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
+			@Override
+			public Boolean call() throws IOException
+			{
+				String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
 
-			if (response.body().ownText().equals("Updated"))
-				return true;
-			else
+				StringBuilder xmlData = new EntryXMLDataBuilder()
+						.addEpisode(entry.getMyWatchedEpisodes())
+						.addStatus(entry.getMyStatus())
+						.addScore(entry.getMyScore())
+						.build();
+
+				Document response = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
+
+				if (response.body().ownText().equals("Updated"))
+					return true;
+
 				return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
-		}
+			}
+		};
 	}
 
 	/**
 	 * Looks for given ListEntry and changes its website field
 	 *
-	 * @param entry the ListEntry, which website will be changed
+	 * @param entry   the ListEntry, which website will be changed
 	 * @param website to store in given entry
 	 */
 	public void addCustomWebiste(ListEntry entry, URL website)

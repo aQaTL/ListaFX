@@ -133,14 +133,7 @@ public class MainViewController
 		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
 		entryToUpdate.setMyScore(myScoreBox.getSelectionModel().getSelectedItem());
 
-		Task<Boolean> task = new Task<Boolean>()
-		{
-			@Override
-			protected Boolean call() throws Exception
-			{
-				return service.updateEntryToMAL(entryToUpdate);
-			}
-		};
+		Task<Boolean> task = service.updateEntryToMAL(entryToUpdate);
 		task.setOnSucceeded(workerState ->
 		{
 			try
@@ -250,14 +243,7 @@ public class MainViewController
 
 		if (alert.getResult().getButtonData().isDefaultButton())
 		{
-			Task<Boolean> deleteEntryTask = new Task<Boolean>()
-			{
-				@Override
-				protected Boolean call() throws Exception
-				{
-					return service.deleteEntryFromMAL(entriesList.getSelectionModel().getSelectedItem().getSeriesDataBaseID());
-				}
-			};
+			Task<Boolean> deleteEntryTask = service.deleteEntryFromMAL(entriesList.getSelectionModel().getSelectedItem().getSeriesDataBaseID());
 
 			deleteEntryTask.setOnSucceeded(workerState ->
 			{

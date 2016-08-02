@@ -215,14 +215,7 @@ public class SearchController
 	@FXML
 	private void add()
 	{
-		Task<ListEntry> addEntryTask = new Task<ListEntry>()
-		{
-			@Override
-			protected ListEntry call() throws Exception
-			{
-				return dataService.addEntryToMAL(selectedEntry, 0);
-			}
-		};
+		Task<ListEntry> addEntryTask = dataService.addEntryToMAL(selectedEntry, 0);
 
 		addEntryTask.setOnSucceeded(workerState ->
 		{
@@ -252,14 +245,7 @@ public class SearchController
 		@Override
 		protected Task<SearchedEntry[]> createTask()
 		{
-			return new Task<SearchedEntry[]>()
-			{
-				@Override
-				protected SearchedEntry[] call() throws Exception
-				{
-					return dataService.searchForEntries(searchField.getText());
-				}
-			};
+			return dataService.searchForEntries(searchField.getText());
 		}
 	}
 
