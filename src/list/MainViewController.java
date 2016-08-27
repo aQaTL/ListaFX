@@ -42,6 +42,7 @@ public class MainViewController
 	private DataService service;
 	private Notifications notify;
 	private String currentTabId;
+	private EntryEventHandler showDetailsHandler;
 
 	private ListEntry selectedEntry;
 
@@ -102,7 +103,7 @@ public class MainViewController
 
 		entriesView.setCellFactory(param -> new ListEntryCell());
 
-		EntryEventHandler showDetailsHandler = entry -> showDetails(entry);
+		showDetailsHandler = entry -> showDetails(entry);
 
 		service.getEntries().forEach(entry ->
 		{
@@ -454,6 +455,7 @@ public class MainViewController
 		@Override
 		public void handleEvent(Entry entry)
 		{
+			entry.setOnMouseClicked(showDetailsHandler);
 			entriesView.getItems().add((ListEntry) entry);
 			service.getEntries().add((ListEntry) entry);
 

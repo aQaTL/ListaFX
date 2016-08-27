@@ -139,7 +139,7 @@ public abstract class Entry
 	public VBox getView()
 	{
 		if(view == null)
-			loadFXML();
+			view = loadFXML();
 		return view;
 	}
 

@@ -27,6 +27,7 @@ import org.controlsfx.control.*;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
@@ -96,7 +97,18 @@ public class SearchController
 			showSearchResults(searchService.getValue());
 			progressBar.setVisible(false);
 		});
-		searchService.setOnFailed(serviceState -> serviceState.getSource().getException().printStackTrace());
+		searchService.setOnFailed(serviceState ->
+				{
+					Throwable e = serviceState.getSource().getException();
+					if(e instanceof SocketTimeoutException)
+					{
+						searchService.restart();
+					}
+					else
+					{
+						e.printStackTrace();
+					}
+				});
 
 		filterBox.getItems().setAll(SeriesTypeEnum.values());
 		filterBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<SeriesTypeEnum>()
