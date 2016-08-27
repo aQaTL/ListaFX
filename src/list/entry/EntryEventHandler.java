@@ -5,5 +5,5 @@ package list.entry;
  */
 public interface EntryEventHandler
 {
-	void handleEvent(ListEntry entry);
+	void handleEvent(Entry entry);
 }

@@ -1,41 +1,18 @@
 package list.entry;
 
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import list.entry.data.MyScoreEnum;
 import list.entry.data.MyStatusEnum;
 import list.entry.data.SeriesTypeEnum;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.net.URL;
 
 /**
  * This class represents a single entry of user MAL
  */
-public class ListEntry extends Entry
+public final class ListEntry extends Entry
 {
-	private VBox view;
-	private EntryEventHandler eventHandler;
-
-	@FXML
-	private Label titleLabel;
-	@FXML
-	private ImageView imageView;
-	@FXML
-	private TextField episodesField;
-	@FXML
-	private TextField scoreField;
-	@FXML
-	public Button detailsButton;
-
 	private int seriesDataBaseID;
 	private String seriesTitle;
 	private String[] seriesSynonyms;
@@ -60,46 +37,23 @@ public class ListEntry extends Entry
 
 	public ListEntry(Element entry)
 	{
-		this.entry = entry;
-
-		if (entry != null)
-		{
-			initFields();
-			view = loadView();
-		}
+		super(entry, "EntryView.fxml");
 	}
 
-	private void initView()
+	@Override
+	protected void initView()
 	{
 		titleLabel.setText(getSeriesTitle());
 		imageView.setImage(getSeriesImage());
 		episodesField.setText(getMyWatchedEpisodes() + "/" + Integer.toString(getSeriesEpisodes()));
-		scoreField.setText(Integer.toString(getMyScore().getScore()) + "/" + "10");
+		typeOrScoreField.setText(Integer.toString(getMyScore().getScore()) + "/" + "10");
 	}
-
-	private VBox loadView()
-	{
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("ListEntryView.fxml"));
-		loader.setController(this);
-
-		try
-		{
-			VBox vbox = loader.load();
-			loader.<ListEntry>getController().initView();
-			return vbox;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-
 
 	/**
 	 * Initializes the most frequently used ListEntry fields
 	 */
-	private void initFields()
+	@Override
+	protected void initFields()
 	{
 		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));
 		seriesTitle = getStringFromElement("series_title");
@@ -132,18 +86,6 @@ public class ListEntry extends Entry
 		website = super.getWebsite(seriesDataBaseID);
 	}
 
-	@FXML
-	private void handleDetailsButton(MouseEvent event)
-	{
-		if(eventHandler != null)
-			eventHandler.handleEvent(this);
-	}
-
-	public void setOnMouseClicked(EntryEventHandler handler)
-	{
-		eventHandler = handler;
-	}
-
 	@Override
 	public String toString()
 	{
@@ -154,13 +96,6 @@ public class ListEntry extends Entry
 	//====================
 	//GETTERS AND SETTERS
 	//====================
-
-	public VBox getView()
-	{
-		if(view == null)
-			loadView();
-		return view;
-	}
 
 	public int getSeriesDataBaseID()
 	{

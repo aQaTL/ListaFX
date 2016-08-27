@@ -1,10 +1,19 @@
 package list.entry;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import list.entry.data.MyScoreEnum;
 import list.entry.data.MyStatusEnum;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,7 +23,37 @@ import java.util.ArrayList;
  */
 public abstract class Entry
 {
+	protected VBox view;
+	protected EntryEventHandler eventHandler;
 	protected Element entry;
+	private String fxmlResource;
+
+	@FXML
+	protected Label titleLabel;
+	@FXML
+	protected ImageView imageView;
+	@FXML
+	protected TextField episodesField;
+	@FXML
+	protected TextField typeOrScoreField;
+	@FXML
+	protected Button detailsButton;
+
+	public Entry(Element entry, String fxmlResource)
+	{
+		this.entry = entry;
+		this.fxmlResource = fxmlResource;
+
+		if(entry != null)
+		{
+			initFields();
+			view = loadFXML();
+		}
+	}
+
+	protected abstract void initView();
+
+	protected abstract void initFields();
 
 	/**
 	 * Gets String value of first given elementTag children node
@@ -42,6 +81,36 @@ public abstract class Entry
 		}
 	}
 
+	protected VBox loadFXML()
+	{
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlResource));
+		loader.setController(this);
+
+		try
+		{
+			VBox vbox = loader.load();
+			loader.<Entry>getController().initView();
+			return vbox;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void setOnMouseClicked(EntryEventHandler handler)
+	{
+		eventHandler = handler;
+	}
+
+	@FXML
+	private void handleDetailsButton(MouseEvent event)
+	{
+		if (eventHandler != null)
+			eventHandler.handleEvent(this);
+	}
+
 	/**
 	 * Parses synonyms that are separated by semicolon
 	 * @return array of synonyms
@@ -65,6 +134,13 @@ public abstract class Entry
 		}
 
 		return synonymsArray.toArray(new String[synonymsArray.size()]);
+	}
+
+	public VBox getView()
+	{
+		if(view == null)
+			loadFXML();
+		return view;
 	}
 
 	/**

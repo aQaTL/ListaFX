@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import list.entry.Entry;
 import list.entry.EntryEventHandler;
 import list.entry.ListEntry;
 import list.entry.data.MyScoreEnum;
@@ -99,7 +100,7 @@ public class MainViewController
 			}
 		});
 
-		entriesView.setCellFactory(param -> new ResultCell());
+		entriesView.setCellFactory(param -> new ListEntryCell());
 
 		EntryEventHandler showDetailsHandler = entry -> showDetails(entry);
 
@@ -113,7 +114,7 @@ public class MainViewController
 		updateEntryDetails();
 	}
 
-	private void showDetails(ListEntry entry)
+	private void showDetails(Entry entry)
 	{
 		if (masterDetailPane.isShowDetailNode() && entry == selectedEntry)
 		{
@@ -122,7 +123,7 @@ public class MainViewController
 		}
 		masterDetailPane.setShowDetailNode(true);
 
-		selectedEntry = entry;
+		selectedEntry = (ListEntry) entry;
 
 		updateEntryDetails();
 	}
@@ -417,9 +418,9 @@ public class MainViewController
 	}
 
 	/**
-	 * Class for displaying Result in gridView
+	 * Class for displaying ListEntry in gridView
 	 */
-	private class ResultCell extends GridCell<ListEntry>
+	private class ListEntryCell extends GridCell<ListEntry>
 	{
 		private ListEntry entry;
 
@@ -451,10 +452,10 @@ public class MainViewController
 	private class EntryEventHandlerImpl implements EntryEventHandler
 	{
 		@Override
-		public void handleEvent(ListEntry entry)
+		public void handleEvent(Entry entry)
 		{
-			entriesView.getItems().add(entry);
-			service.getEntries().add(entry);
+			entriesView.getItems().add((ListEntry) entry);
+			service.getEntries().add((ListEntry) entry);
 
 			notify.text(notifyAddMsg).showInformation();
 		}

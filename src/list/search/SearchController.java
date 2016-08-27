@@ -6,20 +6,19 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.web.WebView;
 import list.DataService;
+import list.entry.Entry;
 import list.entry.EntryEventHandler;
 import list.entry.ListEntry;
 import list.entry.SearchedEntry;
@@ -40,12 +39,12 @@ public class SearchController
 	private EntryEventHandler entryEventHandler;
 	private SearchService searchService;
 
-	private Result[] allResults;
-	final ObservableList<Result> displayedResults = FXCollections.observableArrayList();
+	private SearchedEntry[] results;
+	final ObservableList<SearchedEntry> displayedResults = FXCollections.observableArrayList();
 	private ObservableList<SeriesTypeEnum> selectedFilters = FXCollections.observableArrayList();
 	private SearchedEntry selectedEntry;
 
-	private EventHandler<MouseEvent> addButtonEventHandler;
+	private EntryEventHandler addButtonEvent;
 
 	@FXML
 	private BorderPane borderPane;
@@ -54,7 +53,7 @@ public class SearchController
 	@FXML
 	private ProgressBar progressBar;
 	@FXML
-	private GridView<Result> gridView;
+	private GridView<SearchedEntry> gridView;
 	@FXML
 	private MasterDetailPane masterDetailPane;
 
@@ -89,7 +88,7 @@ public class SearchController
 		this.entryEventHandler = entryEventHandler;
 		searchService = new SearchService();
 
-		addButtonEventHandler = mouseEvent -> showDetails((Result) ((Button) mouseEvent.getSource()).getParent().getParent()); //Spaghetti ftw!
+		addButtonEvent = entry -> showDetails(entry);
 
 		searchService.setOnRunning(event -> progressBar.setVisible(true));
 		searchService.setOnSucceeded((serviceState) ->
@@ -134,16 +133,13 @@ public class SearchController
 	 */
 	public void showSearchResults(SearchedEntry[] searchedEntries)
 	{
-		allResults = new Result[searchedEntries.length];
-		displayedResults.clear();
-
-		for (int i = 0; i < searchedEntries.length; i++)
+		for (SearchedEntry searchedEntry : searchedEntries)
 		{
-			Result result = new Result(searchedEntries[i]);
-			result.addButton.setOnMouseClicked(addButtonEventHandler);
-
-			allResults[i] = result;
+			searchedEntry.setOnMouseClicked(addButtonEvent);
 		}
+		results = searchedEntries;
+
+		displayedResults.clear();
 		filterResults();
 	}
 
@@ -161,16 +157,16 @@ public class SearchController
 	 * Either shows or hides detailNode based on it actual state
 	 * and refreshes it components values
 	 */
-	private void showDetails(Result result)
+	private void showDetails(Entry entry)
 	{
-		if (masterDetailPane.isShowDetailNode() && result.getEntry() == selectedEntry)
+		if (masterDetailPane.isShowDetailNode() && entry == selectedEntry)
 		{
 			masterDetailPane.setShowDetailNode(false);
 			return;
 		}
 		masterDetailPane.setShowDetailNode(true);
 
-		this.selectedEntry = result.getEntry();
+		this.selectedEntry = (SearchedEntry) entry;
 
 		updateDetails();
 	}
@@ -196,15 +192,15 @@ public class SearchController
 	 */
 	private void filterResults()
 	{
-		displayedResults.setAll(allResults);
+		displayedResults.addAll(results);
 
 		if (selectedFilters.size() == 0)
 			return;
 
-		for (Result result : allResults)
+		for (SearchedEntry entry : results)
 		{
-			if (!selectedFilters.contains(result.getEntry().getType()))
-				displayedResults.remove(result);
+			if (!selectedFilters.contains(entry.getType()))
+				displayedResults.remove(entry);
 		}
 	}
 
@@ -250,18 +246,18 @@ public class SearchController
 	}
 
 	/**
-	 * Class for displaying Result in gridView
+	 * Class for displaying SearchedEntry in gridView
 	 */
-	private class ResultCell extends GridCell<Result>
+	private class ResultCell extends GridCell<SearchedEntry>
 	{
 		@Override
-		protected void updateItem(Result item, boolean empty)
+		protected void updateItem(SearchedEntry entry, boolean empty)
 		{
-			super.updateItem(item, empty);
+			super.updateItem(entry, empty);
 
 			if (!empty)
 			{
-				setGraphic(item);
+				setGraphic(entry.getView());
 			}
 		}
 	}

@@ -1,9 +1,18 @@
 package list.entry;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import list.entry.data.SeriesTypeEnum;
 import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -11,7 +20,7 @@ import java.net.URL;
  *
  * Created by Maciej on 2016-05-25.
  */
-public class SearchedEntry extends Entry
+public final class SearchedEntry extends Entry
 {
 	private int id;
 	private String title, englishTitle;
@@ -28,8 +37,21 @@ public class SearchedEntry extends Entry
 
 	public SearchedEntry(Element entry)
 	{
-		this.entry = entry;
+		super(entry, "EntryView.fxml");
+	}
 
+	@Override
+	protected void initView()
+	{
+		titleLabel.setText(getTitle());
+		imageView.setImage(getImage());
+		episodesField.setText(Integer.toString(getEpisodes()));
+		typeOrScoreField.setText(getType().toString());
+	}
+
+	@Override
+	protected void initFields()
+	{
 		id = Integer.parseInt(getStringFromElement("id"));
 		title = getStringFromElement("title");
 //		englishTitle = getStringFromElement("english");
@@ -43,6 +65,17 @@ public class SearchedEntry extends Entry
 		synopsis = getStringFromElement("synopsis");
 		image = new Image(getStringFromElement("image"));
 	}
+
+	@FXML
+	private void handleDetailsButton(MouseEvent event)
+	{
+		if(eventHandler != null)
+			eventHandler.handleEvent(this);
+	}
+
+	//====================
+	//GETTERS AND SETTERS
+	//====================
 
 	public int getId()
 	{

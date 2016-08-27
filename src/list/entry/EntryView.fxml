@@ -9,10 +9,10 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="TOP_CENTER" fillWidth="false" maxHeight="400.0" maxWidth="237.0" minHeight="400.0" minWidth="237.0"
-      prefHeight="400.0" prefWidth="237.0" spacing="5.0" stylesheets="@ListEntryView.css"
+      prefHeight="400.0" prefWidth="237.0" spacing="5.0" stylesheets="@EntryView.css"
       xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<Label id="seriesTitleLabel" fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER"
+		<Label id="titleLabel" fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER"
 		       maxHeight="68.0" maxWidth="228.0" minHeight="42.0" minWidth="179.0" prefHeight="68.0" prefWidth="188.0"
 		       text="Series title" textAlignment="CENTER" wrapText="true">
 			<VBox.margin>
@@ -31,7 +31,7 @@
 		<FlowPane alignment="TOP_CENTER" prefHeight="18.0" prefWidth="237.0">
 			<children>
 				<Label prefHeight="21.0" prefWidth="40.0" text="Score"/>
-				<TextField fx:id="scoreField" editable="false" prefHeight="31.0" prefWidth="117.0"/>
+				<TextField fx:id="typeOrScoreField" editable="false" prefHeight="31.0" prefWidth="117.0"/>
 			</children>
 		</FlowPane>
 		<Button fx:id="detailsButton" onMouseClicked="#handleDetailsButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="74.0" text="Details">
