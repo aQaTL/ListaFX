@@ -1,5 +1,8 @@
 package list.entry;
 
+import list.entry.data.MyScoreEnum;
+import list.entry.data.MyStatusEnum;
+
 /**
  * Helper class for generating xml data of ListEntry or SearchedEntry
  *

@@ -5,6 +5,8 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import list.entry.*;
+import list.entry.data.MyScoreEnum;
+import list.entry.data.MyStatusEnum;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -41,7 +43,6 @@ public class DataService
 	private Map<Integer, URL> customURLs;
 
 	private ExecutorService parserThreadPool;
-	private boolean locked = false;
 
 	/**
 	 * Represents user account with correct credentials. If credentials aren't correct, throws IOException.

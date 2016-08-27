@@ -14,11 +14,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import list.entry.EntryAddListener;
+import list.entry.EntryEventHandler;
 import list.entry.ListEntry;
-import list.entry.MyScoreEnum;
-import list.entry.MyStatusEnum;
+import list.entry.data.MyScoreEnum;
+import list.entry.data.MyStatusEnum;
 import list.search.SearchController;
+import org.controlsfx.control.GridCell;
+import org.controlsfx.control.GridView;
+import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.Notifications;
 
 import java.awt.*;
@@ -39,14 +42,16 @@ public class MainViewController
 	private Notifications notify;
 	private String currentTabId;
 
+	private ListEntry selectedEntry;
+
 	private String notifyAddMsg = "Entry has been added";
 	private String notifyDeleteMsg = "Entry has been deleted";
 	private String notifyUpdateMsg = "Entry has been updated";
 
-	public SplitPane splitPane;
+	public MasterDetailPane masterDetailPane;
 	//Left side components
 	@FXML
-	private ListView<ListEntry> entriesList;
+	private GridView<ListEntry> entriesView;
 	@FXML
 	private Tab allTab;
 	//Right side components
@@ -86,7 +91,7 @@ public class MainViewController
 			if (mySeriesStatusBox.getSelectionModel().getSelectedItem() == MyStatusEnum.COMPLETED)
 			{
 				episodeSpinner.setDisable(true);
-				episodeSpinner.getEditor().setText(Integer.toString(entriesList.getSelectionModel().getSelectedItem().getSeriesEpisodes()));
+				episodeSpinner.getEditor().setText(Integer.toString(selectedEntry.getSeriesEpisodes()));
 			}
 			else
 			{
@@ -94,8 +99,31 @@ public class MainViewController
 			}
 		});
 
-		entriesList.getItems().addAll(service.getEntries());
-		entriesList.getSelectionModel().selectFirst();
+		entriesView.setCellFactory(param -> new ResultCell());
+
+		EntryEventHandler showDetailsHandler = entry -> showDetails(entry);
+
+		service.getEntries().forEach(entry ->
+		{
+			entry.setOnMouseClicked(showDetailsHandler);
+			entriesView.getItems().add(entry);
+		});
+
+		selectedEntry = entriesView.getItems().get(0);
+		updateEntryDetails();
+	}
+
+	private void showDetails(ListEntry entry)
+	{
+		if (masterDetailPane.isShowDetailNode() && entry == selectedEntry)
+		{
+			masterDetailPane.setShowDetailNode(false);
+			return;
+		}
+		masterDetailPane.setShowDetailNode(true);
+
+		selectedEntry = entry;
+
 		updateEntryDetails();
 	}
 
@@ -105,8 +133,6 @@ public class MainViewController
 	@FXML
 	public void updateEntryDetails()
 	{
-		ListEntry selectedEntry = entriesList.getSelectionModel().getSelectedItem();
-
 		if (selectedEntry != null)
 		{
 			seriesTitleLabel.setText(selectedEntry.getSeriesTitle());
@@ -128,7 +154,7 @@ public class MainViewController
 	@FXML
 	private void updateEntryRemotely()
 	{
-		ListEntry entryToUpdate = entriesList.getSelectionModel().getSelectedItem();
+		ListEntry entryToUpdate = selectedEntry;
 		entryToUpdate.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
 		entryToUpdate.setMyStatus(mySeriesStatusBox.getSelectionModel().getSelectedItem());
 		entryToUpdate.setMyScore(myScoreBox.getSelectionModel().getSelectedItem());
@@ -159,7 +185,7 @@ public class MainViewController
 	{
 		try
 		{
-			Desktop.getDesktop().browse(entriesList.getSelectionModel().getSelectedItem().getWebsite().toURI());
+			Desktop.getDesktop().browse(selectedEntry.getWebsite().toURI());
 		}
 		catch (IOException | URISyntaxException e)
 		{
@@ -187,7 +213,7 @@ public class MainViewController
 	{
 		try
 		{
-			entriesList.getSelectionModel().getSelectedItem().setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
+			selectedEntry.setMyWatchedEpisodes(Integer.parseInt(episodeSpinner.getEditor().getText()));
 		}
 		catch (NumberFormatException e)
 		{
@@ -206,7 +232,7 @@ public class MainViewController
 			FXMLLoader loader = new FXMLLoader(SearchController.class.getResource("SearchView.fxml"));
 
 			Parent parent = loader.load();
-			loader.<SearchController>getController().init(service, new EntryAddListenerImpl());
+			loader.<SearchController>getController().init(service, new EntryEventHandlerImpl());
 
 			Stage searchWindow = new Stage();
 			searchWindow.setTitle("Search for anime");
@@ -227,11 +253,11 @@ public class MainViewController
 	@FXML
 	private void deleteEntry()
 	{
-		if (entriesList.getSelectionModel().getSelectedItem() == null)
+		if (selectedEntry == null)
 			return;
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setHeaderText("Deleting " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle() + " from list");
+		alert.setHeaderText("Deleting " + selectedEntry.getSeriesTitle() + " from list");
 		alert.setContentText("Are you sure?");
 		alert.setTitle("Confirm");
 
@@ -243,7 +269,7 @@ public class MainViewController
 
 		if (alert.getResult().getButtonData().isDefaultButton())
 		{
-			Task<Boolean> deleteEntryTask = service.deleteEntryFromMAL(entriesList.getSelectionModel().getSelectedItem().getSeriesDataBaseID());
+			Task<Boolean> deleteEntryTask = service.deleteEntryFromMAL(selectedEntry.getSeriesDataBaseID());
 
 			deleteEntryTask.setOnSucceeded(workerState ->
 			{
@@ -251,8 +277,8 @@ public class MainViewController
 				{
 					if (deleteEntryTask.get())
 					{
-						service.getEntries().remove(entriesList.getSelectionModel().getSelectedItem());
-						entriesList.getItems().remove(entriesList.getSelectionModel().getSelectedItem());
+						service.getEntries().remove(selectedEntry);
+						entriesView.getItems().remove(selectedEntry);
 
 						notify.text(notifyDeleteMsg).showInformation();
 					}
@@ -276,7 +302,7 @@ public class MainViewController
 	{
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Set custom website");
-		dialog.setHeaderText("Set custom website for " + entriesList.getSelectionModel().getSelectedItem().getSeriesTitle());
+		dialog.setHeaderText("Set custom website for " + selectedEntry.getSeriesTitle());
 
 		DialogPane alertPane = dialog.getDialogPane();
 		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
@@ -288,9 +314,8 @@ public class MainViewController
 			try
 			{
 				URL customWebsite = new URL(url);
-				ListEntry entry = entriesList.getSelectionModel().getSelectedItem();
-				entry.setWebsite(customWebsite);
-				service.addCustomWebiste(entry, customWebsite);
+				selectedEntry.setWebsite(customWebsite);
+				service.addCustomWebiste(selectedEntry, customWebsite);
 			}
 			catch (MalformedURLException e)
 			{
@@ -312,20 +337,20 @@ public class MainViewController
 	}
 
 	/**
-	 * Adjust currently showing entries in entriesList to match currently selected tab
-	 *
+	 * Adjust currently showing entries in entriesView to match currently selected tab
+	 * <p>
 	 * TODO use ObservableList
 	 */
 	private void loadEntriesWithFilter()
 	{
 		ArrayList<ListEntry> filteredEntries = new ArrayList<>(service.getEntries().size());
-		entriesList.getItems().clear();
+		entriesView.getItems().clear();
 
 		switch (currentTabId)
 		{
 			case "allTab":
 			{
-				entriesList.getItems().addAll(service.getEntries());
+				entriesView.getItems().addAll(service.getEntries());
 				break;
 			}
 			case "watchingTab":
@@ -335,7 +360,7 @@ public class MainViewController
 					if (entry.getMyStatus() == MyStatusEnum.WATCHING)
 						filteredEntries.add(entry);
 				});
-				entriesList.getItems().addAll(filteredEntries);
+				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -346,7 +371,7 @@ public class MainViewController
 					if (entry.getMyStatus() == MyStatusEnum.COMPLETED)
 						filteredEntries.add(entry);
 				});
-				entriesList.getItems().addAll(filteredEntries);
+				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -357,7 +382,7 @@ public class MainViewController
 					if (entry.getMyStatus() == MyStatusEnum.ONHOLD)
 						filteredEntries.add(entry);
 				});
-				entriesList.getItems().addAll(filteredEntries);
+				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -368,7 +393,7 @@ public class MainViewController
 					if (entry.getMyStatus() == MyStatusEnum.DROPPED)
 						filteredEntries.add(entry);
 				});
-				entriesList.getItems().addAll(filteredEntries);
+				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -379,25 +404,56 @@ public class MainViewController
 					if (entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
 						filteredEntries.add(entry);
 				});
-				entriesList.getItems().addAll(filteredEntries);
+				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
 		}
+		if (entriesView.getItems().size() > 0)
+		{
+			selectedEntry = entriesView.getItems().get(0);
+			updateEntryDetails();
+		}
+	}
 
-		entriesList.getSelectionModel().selectFirst();
-		updateEntryDetails();
+	/**
+	 * Class for displaying Result in gridView
+	 */
+	private class ResultCell extends GridCell<ListEntry>
+	{
+		private ListEntry entry;
+
+		@Override
+		protected void updateItem(ListEntry item, boolean empty)
+		{
+			super.updateItem(item, empty);
+
+			entry = item;
+			if (!empty)
+			{
+				setGraphic(item.getView());
+			}
+			else
+			{
+				setGraphic(null);
+			}
+		}
+
+		public ListEntry getEntry()
+		{
+			return entry;
+		}
 	}
 
 	/**
 	 * Defines action that is fired after successfully adding new entry
 	 */
-	private class EntryAddListenerImpl implements EntryAddListener
+	private class EntryEventHandlerImpl implements EntryEventHandler
 	{
 		@Override
-		public void entryAdded(ListEntry entry)
+		public void handleEvent(ListEntry entry)
 		{
-			entriesList.getItems().add(entry);
+			entriesView.getItems().add(entry);
 			service.getEntries().add(entry);
 
 			notify.text(notifyAddMsg).showInformation();

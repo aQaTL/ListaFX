@@ -80,7 +80,7 @@ public class LogInController
 			loader.<MainViewController>getController().init(service);
 
 			stage.setOnCloseRequest(windowEvent -> showExitWarning(windowEvent));
-			stage.setScene(new Scene(mainView, loader.<MainViewController>getController().splitPane.getPrefWidth(), loader.<MainViewController>getController().splitPane.getPrefHeight()));
+			stage.setScene(new Scene(mainView, loader.<MainViewController>getController().masterDetailPane.getPrefWidth(), loader.<MainViewController>getController().masterDetailPane.getPrefHeight()));
 		});
 	}
 

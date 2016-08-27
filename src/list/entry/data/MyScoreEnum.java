@@ -1,4 +1,4 @@
-package list.entry;
+package list.entry.data;
 
 /**
  * Created by Maciej on 2016-06-11.

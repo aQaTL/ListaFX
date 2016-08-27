@@ -65,6 +65,18 @@
 	-fx-background-color: tomato, black, firebrick;
 	-fx-text-fill: #FFFACD;
 }
+.grid-view .virtual-flow .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
 .list-cell:odd 
 {
 	-fx-background-color: #696969;

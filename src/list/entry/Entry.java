@@ -1,5 +1,7 @@
 package list.entry;
 
+import list.entry.data.MyScoreEnum;
+import list.entry.data.MyStatusEnum;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 

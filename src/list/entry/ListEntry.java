@@ -1,8 +1,20 @@
 package list.entry;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import list.entry.data.MyScoreEnum;
+import list.entry.data.MyStatusEnum;
+import list.entry.data.SeriesTypeEnum;
 import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -10,6 +22,20 @@ import java.net.URL;
  */
 public class ListEntry extends Entry
 {
+	private VBox view;
+	private EntryEventHandler eventHandler;
+
+	@FXML
+	private Label titleLabel;
+	@FXML
+	private ImageView imageView;
+	@FXML
+	private TextField episodesField;
+	@FXML
+	private TextField scoreField;
+	@FXML
+	public Button detailsButton;
+
 	private int seriesDataBaseID;
 	private String seriesTitle;
 	private String[] seriesSynonyms;
@@ -37,8 +63,38 @@ public class ListEntry extends Entry
 		this.entry = entry;
 
 		if (entry != null)
+		{
 			initFields();
+			view = loadView();
+		}
 	}
+
+	private void initView()
+	{
+		titleLabel.setText(getSeriesTitle());
+		imageView.setImage(getSeriesImage());
+		episodesField.setText(getMyWatchedEpisodes() + "/" + Integer.toString(getSeriesEpisodes()));
+		scoreField.setText(Integer.toString(getMyScore().getScore()) + "/" + "10");
+	}
+
+	private VBox loadView()
+	{
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("ListEntryView.fxml"));
+		loader.setController(this);
+
+		try
+		{
+			VBox vbox = loader.load();
+			loader.<ListEntry>getController().initView();
+			return vbox;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 	/**
 	 * Initializes the most frequently used ListEntry fields
@@ -76,6 +132,18 @@ public class ListEntry extends Entry
 		website = super.getWebsite(seriesDataBaseID);
 	}
 
+	@FXML
+	private void handleDetailsButton(MouseEvent event)
+	{
+		if(eventHandler != null)
+			eventHandler.handleEvent(this);
+	}
+
+	public void setOnMouseClicked(EntryEventHandler handler)
+	{
+		eventHandler = handler;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -87,6 +155,12 @@ public class ListEntry extends Entry
 	//GETTERS AND SETTERS
 	//====================
 
+	public VBox getView()
+	{
+		if(view == null)
+			loadView();
+		return view;
+	}
 
 	public int getSeriesDataBaseID()
 	{

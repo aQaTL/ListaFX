@@ -20,10 +20,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.web.WebView;
 import list.DataService;
-import list.entry.EntryAddListener;
+import list.entry.EntryEventHandler;
 import list.entry.ListEntry;
 import list.entry.SearchedEntry;
-import list.entry.SeriesTypeEnum;
+import list.entry.data.SeriesTypeEnum;
 import org.controlsfx.control.*;
 
 import java.awt.*;
@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutionException;
 public class SearchController
 {
 	private DataService dataService;
-	private EntryAddListener entryAddListener;
+	private EntryEventHandler entryEventHandler;
 	private SearchService searchService;
 
 	private Result[] allResults;
@@ -83,10 +83,10 @@ public class SearchController
 	 *
 	 * @param service
 	 */
-	public void init(DataService service, EntryAddListener entryAddListener)
+	public void init(DataService service, EntryEventHandler entryEventHandler)
 	{
 		this.dataService = service;
-		this.entryAddListener = entryAddListener;
+		this.entryEventHandler = entryEventHandler;
 		searchService = new SearchService();
 
 		addButtonEventHandler = mouseEvent -> showDetails((Result) ((Button) mouseEvent.getSource()).getParent().getParent()); //Spaghetti ftw!
@@ -222,8 +222,8 @@ public class SearchController
 			try
 			{
 				ListEntry newEntry = addEntryTask.get();
-				if (newEntry != null && entryAddListener != null)
-					entryAddListener.entryAdded(newEntry);
+				if (newEntry != null && entryEventHandler != null)
+					entryEventHandler.handleEvent(newEntry);
 				else
 					System.err.println("Couldn't add");
 				//TODO alert user when adding fails

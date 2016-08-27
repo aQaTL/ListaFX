@@ -1,6 +1,7 @@
 package list.entry;
 
 import javafx.scene.image.Image;
+import list.entry.data.SeriesTypeEnum;
 import org.jsoup.nodes.Element;
 
 import java.net.URL;
