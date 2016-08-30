@@ -204,15 +204,18 @@ public class SearchController
 	 */
 	private void filterResults()
 	{
-		displayedResults.addAll(results);
+		displayedResults.clear();
 
-		if (selectedFilters.size() == 0)
-			return;
-
-		for (SearchedEntry entry : results)
+		if(selectedFilters.size() == 0)
 		{
-			if (!selectedFilters.contains(entry.getType()))
-				displayedResults.remove(entry);
+			displayedResults.addAll(results);
+			return;
+		}
+
+		for(SearchedEntry entry : results)
+		{
+			if(selectedFilters.contains(entry.getType()))
+				displayedResults.add(entry);
 		}
 	}
 
