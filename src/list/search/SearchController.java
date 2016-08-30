@@ -98,17 +98,17 @@ public class SearchController
 			progressBar.setVisible(false);
 		});
 		searchService.setOnFailed(serviceState ->
-				{
-					Throwable e = serviceState.getSource().getException();
-					if(e instanceof SocketTimeoutException)
-					{
-						searchService.restart();
-					}
-					else
-					{
-						e.printStackTrace();
-					}
-				});
+		{
+			Throwable e = serviceState.getSource().getException();
+			if (e instanceof SocketTimeoutException)
+			{
+				searchService.restart();
+			}
+			else
+			{
+				e.printStackTrace();
+			}
+		});
 
 		filterBox.getItems().setAll(SeriesTypeEnum.values());
 		filterBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<SeriesTypeEnum>()
