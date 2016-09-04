@@ -1,5 +1,7 @@
 package list;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -44,6 +46,7 @@ public class MainViewController
 	private String currentTabId;
 	private EntryEventHandler showDetailsHandler;
 
+	private ObservableList<ListEntry> displayedEntries;
 	private ListEntry selectedEntry;
 
 	private String notifyAddMsg = "Entry has been added";
@@ -103,15 +106,13 @@ public class MainViewController
 
 		entriesView.setCellFactory(param -> new ListEntryCell());
 
-		showDetailsHandler = entry -> showDetails(entry);
+		showDetailsHandler = this::showDetails;
 
-		service.getEntries().forEach(entry ->
-		{
-			entry.setOnMouseClicked(showDetailsHandler);
-			entriesView.getItems().add(entry);
-		});
+		displayedEntries = FXCollections.observableArrayList(service.getEntries());
+		displayedEntries.forEach(entry -> entry.setOnMouseClicked(showDetailsHandler));
+		entriesView.setItems(displayedEntries);
 
-		selectedEntry = entriesView.getItems().get(0);
+		selectedEntry = displayedEntries.get(0);
 		updateEntryDetails();
 	}
 
@@ -133,7 +134,7 @@ public class MainViewController
 	 * Refreshes entry details side to match currently selected entry
 	 */
 	@FXML
-	public void updateEntryDetails()
+	private void updateEntryDetails()
 	{
 		if (selectedEntry != null)
 		{
@@ -340,19 +341,16 @@ public class MainViewController
 
 	/**
 	 * Adjust currently showing entries in entriesView to match currently selected tab
-	 * <p>
-	 * TODO use ObservableList
 	 */
 	private void loadEntriesWithFilter()
 	{
-		ArrayList<ListEntry> filteredEntries = new ArrayList<>(service.getEntries().size());
-		entriesView.getItems().clear();
+		displayedEntries.clear();
 
 		switch (currentTabId)
 		{
 			case "allTab":
 			{
-				entriesView.getItems().addAll(service.getEntries());
+				displayedEntries.addAll(service.getEntries());
 				break;
 			}
 			case "watchingTab":
@@ -360,9 +358,8 @@ public class MainViewController
 				service.getEntries().forEach(entry ->
 				{
 					if (entry.getMyStatus() == MyStatusEnum.WATCHING)
-						filteredEntries.add(entry);
+						displayedEntries.add(entry);
 				});
-				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -371,9 +368,8 @@ public class MainViewController
 				service.getEntries().forEach(entry ->
 				{
 					if (entry.getMyStatus() == MyStatusEnum.COMPLETED)
-						filteredEntries.add(entry);
+						displayedEntries.add(entry);
 				});
-				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -382,9 +378,8 @@ public class MainViewController
 				service.getEntries().forEach(entry ->
 				{
 					if (entry.getMyStatus() == MyStatusEnum.ONHOLD)
-						filteredEntries.add(entry);
+						displayedEntries.add(entry);
 				});
-				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -393,9 +388,8 @@ public class MainViewController
 				service.getEntries().forEach(entry ->
 				{
 					if (entry.getMyStatus() == MyStatusEnum.DROPPED)
-						filteredEntries.add(entry);
+						displayedEntries.add(entry);
 				});
-				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
@@ -404,16 +398,15 @@ public class MainViewController
 				service.getEntries().forEach(entry ->
 				{
 					if (entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
-						filteredEntries.add(entry);
+						displayedEntries.add(entry);
 				});
-				entriesView.getItems().addAll(filteredEntries);
 
 				break;
 			}
 		}
-		if (entriesView.getItems().size() > 0)
+		if (displayedEntries.size() > 0)
 		{
-			selectedEntry = entriesView.getItems().get(0);
+			selectedEntry = displayedEntries.get(0);
 			updateEntryDetails();
 		}
 	}
