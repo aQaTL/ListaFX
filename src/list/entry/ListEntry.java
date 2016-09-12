@@ -41,7 +41,7 @@ public final class ListEntry extends Entry
 	}
 
 	@Override
-	protected void initView()
+	public void initView()
 	{
 		titleLabel.setText(getSeriesTitle());
 		imageView.setImage(getSeriesImage());

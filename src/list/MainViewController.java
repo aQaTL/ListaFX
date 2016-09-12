@@ -169,6 +169,7 @@ public class MainViewController
 			{
 				if (task.get())
 				{
+					selectedEntry.initView(); //Just updates it
 					notify.text(notifyUpdateMsg).showInformation();
 				}
 			}
