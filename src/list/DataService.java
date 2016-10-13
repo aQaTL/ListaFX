@@ -4,7 +4,11 @@ import javafx.concurrent.Task;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import list.entry.*;
+import javax.xml.stream.XMLStreamException;
+import list.entry.Entry;
+import list.entry.EntryXMLDataBuilder;
+import list.entry.ListEntry;
+import list.entry.SearchedEntry;
 import list.entry.data.MyScoreEnum;
 import list.entry.data.MyStatusEnum;
 import org.jsoup.Jsoup;
@@ -12,12 +16,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -39,7 +41,7 @@ public class DataService
 
 	public static final int PARSER_THREADS = 4;
 
-	private ArrayList<ListEntry> entries;
+	private List<ListEntry> entries;
 	private Map<Integer, URL> customURLs;
 
 	private ExecutorService parserThreadPool;
@@ -52,31 +54,34 @@ public class DataService
 	 * @param username     user login
 	 * @throws IOException
 	 */
-	public DataService(String encodedLogin, String username) throws IOException
+	public DataService(String encodedLogin, String username) throws IOException, XMLStreamException
 	{
 		this.encodedLogin = encodedLogin;
 		parserThreadPool = Executors.newFixedThreadPool(PARSER_THREADS);
 
 		String userListAddress = "http://myanimelist.net/malappinfo.php?u=" + username + "&status=all&type=anime";
-		Document userListDocument = Jsoup.connect(userListAddress).get();
 
 		customURLs = loadCustomWebsites();
 
-		Elements animeEntries = userListDocument.getElementsByTag("anime");
-		entries = new ArrayList<>(animeEntries.size());
+		System.out.println("Parsing...");
+		long startTime = System.currentTimeMillis();
 
-		animeEntries.forEach(entry ->
+		try (InputStream url = new URL(userListAddress).openStream())
 		{
-			ListEntry listEntry = new ListEntry(entry);
+			entries = MALParser.parseToListEntryList(url);
+		}
 
-			if (customURLs.containsKey(listEntry.getSeriesDataBaseID()))
-				listEntry.setWebsite(customURLs.get(listEntry.getSeriesDataBaseID()));
-
-			entries.add(listEntry);
+		//Loads local custom websites
+		entries.forEach(entry ->
+		{
+			if(customURLs.containsKey(entry.getDatabaseId()))
+				entry.setWebsite(customURLs.get(entry.getDatabaseId()));
 		});
+
+		System.out.println("Parsing ended. Time " + (System.currentTimeMillis() - startTime));
 	}
 
-	public ArrayList<ListEntry> getEntries()
+	public List<ListEntry> getEntries()
 	{
 		return entries;
 	}
@@ -94,29 +99,16 @@ public class DataService
 			@Override
 			protected SearchedEntry[] call() throws Exception
 			{
-
 				String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
 
-				Document searchingResultsDocument = Jsoup.connect(address).header("Authorization", encodedLogin).get();
-				Elements entries = searchingResultsDocument.getElementsByTag("entry");
-				int amountOfEntries = entries.size();
+				HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+				connection.setDoOutput(true);
+				connection.setUseCaches(false);
+				connection.setRequestProperty("Authorization", encodedLogin);
+				connection.setRequestMethod("GET");
 
-				long milis = System.currentTimeMillis();
-				System.out.println("Amount of entries: " + amountOfEntries);
-
-				SearchedEntry[] entriesArray = new SearchedEntry[amountOfEntries];
-				List<Future<Entry>> futureTasks = new ArrayList<>(amountOfEntries);
-
-				//Multithreading here
-				entries.forEach(entry -> futureTasks.add(parserThreadPool.submit(new EntryParser(EntryParser.EntryType.SEARCHED_ENTRY, entry))));
-
-				for (int i = 0; i < amountOfEntries; i++)
-				{
-					entriesArray[i] = (SearchedEntry) futureTasks.get(i).get();
-				}
-
-				System.out.println(System.currentTimeMillis() - milis);
-				return entriesArray;
+				InputStream response = connection.getInputStream();
+				return MALParser.parseToSearchedEntryList(response).toArray(new SearchedEntry[0]);
 			}
 		};
 	}
@@ -136,7 +128,7 @@ public class DataService
 			@Override
 			protected ListEntry call() throws Exception
 			{
-				String address = "http://myanimelist.net/api/animelist/add/" + entry.getId() + ".xml";
+				String address = "http://myanimelist.net/api/animelist/add/" + entry.getDatabaseId() + ".xml";
 
 				StringBuilder xmlData = new EntryXMLDataBuilder()
 						.addEpisode(initEpisode)
@@ -191,7 +183,7 @@ public class DataService
 			@Override
 			public Boolean call() throws IOException
 			{
-				String address = malAddress + "api/animelist/update/" + entry.getSeriesDataBaseID() + ".xml";
+				String address = malAddress + "api/animelist/update/" + entry.getDatabaseId() + ".xml";
 
 				StringBuilder xmlData = new EntryXMLDataBuilder()
 						.addEpisode(entry.getMyWatchedEpisodes())
@@ -218,7 +210,7 @@ public class DataService
 	public void addCustomWebiste(ListEntry entry, URL website)
 	{
 		entries.get(entries.indexOf(entry)).setWebsite(website);
-		customURLs.put(entry.getSeriesDataBaseID(), website);
+		customURLs.put(entry.getDatabaseId(), website);
 	}
 
 	/**

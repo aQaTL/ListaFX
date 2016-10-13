@@ -19,7 +19,7 @@
 <?import org.controlsfx.control.GridView?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@MainView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
+<BorderPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" stylesheets="@MainView.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.MainViewController">
 
 	<center>
 		<MasterDetailPane fx:id="masterDetailPane" showDetailNode="false">
@@ -88,21 +88,20 @@
 		</MasterDetailPane>
 	</center>
 	<top>
-		<MenuBar nodeOrientation="LEFT_TO_RIGHT">
-			<menus>
+		<HBox fx:id="topHBox" alignment="CENTER_RIGHT">
+			<MenuBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="32.0" HBox.hgrow="ALWAYS">
 				<Menu mnemonicParsing="false" text="Entry">
-					<items>
-						<MenuItem fx:id="addEntryMenuItem" mnemonicParsing="false" onAction="#addEntry" text="Add new" />
-						<MenuItem fx:id="deleteEntryMenuItem" mnemonicParsing="false" onAction="#deleteEntry" text="Delete selected" />
-						<MenuItem fx:id="setCustomWebsiteMenuItem" mnemonicParsing="false" onAction="#showCustomWebsiteDialog" text="Set custom website" />
-					</items>
+					<MenuItem fx:id="addEntryMenuItem" mnemonicParsing="false" onAction="#addEntry"
+					          text="Add new"/>
+					<MenuItem fx:id="deleteEntryMenuItem" mnemonicParsing="false" onAction="#deleteEntry"
+					          text="Delete selected"/>
+					<MenuItem fx:id="setCustomWebsiteMenuItem" mnemonicParsing="false"
+					          onAction="#showCustomWebsiteDialog" text="Set custom website"/>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
-					<items>
-						<MenuItem mnemonicParsing="false" onAction="#showAboutDialog" text="About" />
-					</items>
+					<MenuItem mnemonicParsing="false" onAction="#showAboutDialog" text="About"/>
 				</Menu>
-			</menus>
-		</MenuBar>
+			</MenuBar>
+		</HBox>
 	</top>
 </BorderPane>

@@ -6,21 +6,12 @@ import list.entry.data.MyStatusEnum;
 import list.entry.data.SeriesTypeEnum;
 import org.jsoup.nodes.Element;
 
-import java.net.URL;
-
 /**
  * This class represents a single entry of user MAL
  */
 public final class ListEntry extends Entry
 {
-	private int seriesDataBaseID;
-	private String seriesTitle;
-	private String[] seriesSynonyms;
-	private SeriesTypeEnum seriesType;
-	private int seriesEpisodes;
 	private short seriesStatus;
-	private String seriesStart;
-	private String seriesEnd;
 	private Image seriesImage;
 	private int myID;
 	private int myWatchedEpisodes;
@@ -33,20 +24,57 @@ public final class ListEntry extends Entry
 	private String myLastUpdated;
 	private String myTags;
 
-	private URL website; //Custom or MAL website (depends on user settings)
-
 	public ListEntry(Element entry)
 	{
-		super(entry, "EntryView.fxml");
+		super(entry);
+	}
+
+	public ListEntry()
+	{
+		super();
+	}
+
+	public ListEntry(String[] values)
+	{
+		super();
+
+		initFields(values);
+		loadFXML();
 	}
 
 	@Override
 	public void initView()
 	{
-		titleLabel.setText(getSeriesTitle());
-		imageView.setImage(getSeriesImage());
-		episodesField.setText(getMyWatchedEpisodes() + "/" + Integer.toString(getSeriesEpisodes()));
+		titleLabel.setText(getTitle());
+		imageView.setImage(getImage());
+		episodesField.setText(getMyWatchedEpisodes() + "/" + Integer.toString(getEpisodes()));
 		typeOrScoreField.setText(Integer.toString(getMyScore().getScore()) + "/" + "10");
+	}
+
+	private void initFields(String[] values)
+	{
+		databaseId = Integer.parseInt(values[0]);
+		title = values[1];
+		synonyms = parseSynonyms(values[2]);
+		seriesType = SeriesTypeEnum.valueOf(Integer.parseInt(values[3]));
+		episodes = Integer.parseInt(values[4]);
+		seriesStatus = Short.parseShort(values[5]);
+		startDate = values[6];
+		endDate = values[7];
+		//seriesImage = new Image(values[8]); //SPOTTED!!!!
+		imageUrl = values[8];
+		myID = Integer.parseInt(values[9]);
+		myWatchedEpisodes = Integer.parseInt(values[10]);
+		myStartDate = values[11];
+		myFinishDate = values[12];
+		myScore = MyScoreEnum.getMyScoreEnum(values[13]);
+		myStatus = MyStatusEnum.getMyStatusEnum(values[14]);
+		myRewatching = Integer.parseInt(values[15]);
+		myRewatchingEpisode = Integer.parseInt(values[16]);
+		myLastUpdated = values[17];
+		myTags = values[18];
+
+		website = super.getWebsite(databaseId);
 	}
 
 	/**
@@ -55,14 +83,14 @@ public final class ListEntry extends Entry
 	@Override
 	protected void initFields()
 	{
-		seriesDataBaseID = Integer.parseInt(getStringFromElement("series_animedb_id"));
-		seriesTitle = getStringFromElement("series_title");
-//		seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
+		databaseId = Integer.parseInt(getStringFromElement("series_animedb_id"));
+		title = getStringFromElement("series_title");
+//		synonyms = parseSynonyms(getStringFromElement("series_synonyms"));
 //		seriesType = Short.parseShort(getStringFromElement("series_type"));
-		seriesEpisodes = Integer.parseInt(getStringFromElement("series_episodes"));
+		episodes = Integer.parseInt(getStringFromElement("series_episodes"));
 //		seriesStatus = Short.parseShort(getStringFromElement("series_status"));
-//		seriesStart = getStringFromElement("series_start");
-//		seriesEnd = getStringFromElement("series_end");
+//		startDate = getStringFromElement("series_start");
+//		endDate = getStringFromElement("series_end");
 		seriesImage = new Image(getStringFromElement("series_image"));
 //		myID = Integer.parseInt(getStringFromElement("my_id"));
 		myWatchedEpisodes = Integer.parseInt(getStringFromElement("my_watched_episodes"));
@@ -83,84 +111,19 @@ public final class ListEntry extends Entry
 			myTags = "";
 		}
 
-		website = super.getWebsite(seriesDataBaseID);
+		website = super.getWebsite(databaseId);
 	}
 
 	@Override
 	public String toString()
 	{
-		return seriesTitle;
+		return title;
 	}
 
 
 	//====================
 	//GETTERS AND SETTERS
 	//====================
-
-	public int getSeriesDataBaseID()
-	{
-		return seriesDataBaseID;
-	}
-
-	public String getSeriesTitle()
-	{
-		return seriesTitle;
-	}
-
-	public String[] getSeriesSynonyms()
-	{
-		if (seriesSynonyms == null)
-			seriesSynonyms = parseSynonyms(getStringFromElement("series_synonyms"));
-
-		return seriesSynonyms;
-	}
-
-	public SeriesTypeEnum getSeriesType()
-	{
-		if (seriesType == null)
-			seriesType = SeriesTypeEnum.valueOf(Integer.parseInt(getStringFromElement("series_type")));
-
-		return seriesType;
-	}
-
-	public int getSeriesEpisodes()
-	{
-		return seriesEpisodes;
-	}
-
-	public void setSeriesEpisodes(int seriesEpisodes)
-	{
-		this.seriesEpisodes = seriesEpisodes;
-	}
-
-	public short getSeriesStatus()
-	{
-		if (seriesStatus == 0)
-			seriesStatus = Short.parseShort(getStringFromElement("series_status"));
-
-		return seriesStatus;
-	}
-
-	public String getSeriesStart()
-	{
-		if (seriesStart == null)
-			seriesStart = getStringFromElement("series_start");
-
-		return seriesStart;
-	}
-
-	public String getSeriesEnd()
-	{
-		if (seriesEnd == null)
-			seriesEnd = getStringFromElement("series_end");
-
-		return seriesEnd;
-	}
-
-	public Image getSeriesImage()
-	{
-		return seriesImage;
-	}
 
 	public int getMyID()
 	{
@@ -178,22 +141,6 @@ public final class ListEntry extends Entry
 	public void setMyWatchedEpisodes(int myWatchedEpisodes)
 	{
 		this.myWatchedEpisodes = myWatchedEpisodes;
-	}
-
-	public String getMyStartDate()
-	{
-		if (myStartDate == null)
-			myStartDate = getStringFromElement("my_start_date");
-
-		return myStartDate;
-	}
-
-	public String getMyFinishDate()
-	{
-		if (myFinishDate == null)
-			myFinishDate = getStringFromElement("my_finish_date");
-
-		return myFinishDate;
 	}
 
 	public MyScoreEnum getMyScore()
@@ -245,54 +192,9 @@ public final class ListEntry extends Entry
 		return myTags;
 	}
 
-	public URL getWebsite()
-	{
-		return website;
-	}
-
-	public void setWebsite(URL website)
-	{
-		this.website = website;
-	}
-
-	public void setSeriesDataBaseID(int seriesDataBaseID)
-	{
-		this.seriesDataBaseID = seriesDataBaseID;
-	}
-
-	public void setSeriesTitle(String seriesTitle)
-	{
-		this.seriesTitle = seriesTitle;
-	}
-
-	public void setSeriesSynonyms(String[] seriesSynonyms)
-	{
-		this.seriesSynonyms = seriesSynonyms;
-	}
-
-	public void setSeriesType(SeriesTypeEnum seriesType)
-	{
-		this.seriesType = seriesType;
-	}
-
 	public void setSeriesStatus(short seriesStatus)
 	{
 		this.seriesStatus = seriesStatus;
-	}
-
-	public void setSeriesStart(String seriesStart)
-	{
-		this.seriesStart = seriesStart;
-	}
-
-	public void setSeriesEnd(String seriesEnd)
-	{
-		this.seriesEnd = seriesEnd;
-	}
-
-	public void setSeriesImage(Image seriesImage)
-	{
-		this.seriesImage = seriesImage;
 	}
 
 	public void setMyID(int myID)

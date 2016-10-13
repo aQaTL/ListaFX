@@ -3,6 +3,7 @@ package list.logIn;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,6 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.xml.stream.XMLStreamException;
 import list.DataService;
 import list.MainViewController;
 import org.jsoup.HttpStatusException;
@@ -60,7 +62,7 @@ public class LogInController
 		logInService = new LogInService();
 		logInService.setOnFailed(workerStateEvent ->
 		{
-			Exception e = (Exception) workerStateEvent.getSource().getException();
+			Throwable e = (Throwable) workerStateEvent.getSource().getException();
 
 			if (e instanceof HttpStatusException && ((HttpStatusException) e).getStatusCode() == 401)
 			{
@@ -141,7 +143,7 @@ public class LogInController
 			return new Task<DataService>()
 			{
 				@Override
-				protected DataService call() throws IOException
+				protected DataService call() throws IOException, XMLStreamException
 				{
 					String userCredentials = usernameField.getText() + ":" + userPasswordField.getText();
 					String encodedLogin = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userCredentials.getBytes());

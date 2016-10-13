@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -12,8 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import list.entry.Entry;
@@ -26,13 +31,13 @@ import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -53,12 +58,18 @@ public class MainViewController
 	private String notifyDeleteMsg = "Entry has been deleted";
 	private String notifyUpdateMsg = "Entry has been updated";
 
+	@FXML
+	private BorderPane rootPane;
+	@FXML
 	public MasterDetailPane masterDetailPane;
+	@FXML
+	private HBox topHBox;
+	private TextField searchTextField; //Couldn't inject ClearableTextField in fxml
 	//Left side components
 	@FXML
 	private GridView<ListEntry> entriesView;
 	@FXML
-	private Tab allTab;
+	private Tab allTab, watchingTab, completedTab, onHoldTab, droppedTab, planToWatchTab;
 	//Right side components
 	@FXML
 	private Label seriesTitleLabel;
@@ -82,11 +93,13 @@ public class MainViewController
 	{
 		this.service = service;
 
+		//Initializes notifications
 		notify = Notifications.create()
 				.title("ListaFX")
 				.position(Pos.TOP_RIGHT)
 				.hideAfter(new Duration(1500));
 
+		//Initializes entry-related components
 		episodeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
 		myScoreBox.getItems().addAll(MyScoreEnum.values());
 		mySeriesStatusBox.getItems().addAll(MyStatusEnum.values());
@@ -96,7 +109,7 @@ public class MainViewController
 			if (mySeriesStatusBox.getSelectionModel().getSelectedItem() == MyStatusEnum.COMPLETED)
 			{
 				episodeSpinner.setDisable(true);
-				episodeSpinner.getEditor().setText(Integer.toString(selectedEntry.getSeriesEpisodes()));
+				episodeSpinner.getEditor().setText(Integer.toString(selectedEntry.getEpisodes()));
 			}
 			else
 			{
@@ -108,8 +121,29 @@ public class MainViewController
 
 		showDetailsHandler = this::showDetails;
 
+		//Initializes searchTextField
+		searchTextField = TextFields.createClearableTextField();
+		searchTextField.setVisible(false);
+//		topHBox.getChildren().add(searchTextField);
+		EventHandler<KeyEvent> searchBarKeyEvent = (keyEvent ->
+		{
+			if (keyEvent.getCode() == KeyCode.F3)
+				showSearchBar();
+		});
+		rootPane.setOnKeyPressed(searchBarKeyEvent);
+		searchTextField.setOnKeyPressed(searchBarKeyEvent);
+		searchTextField.setOnKeyReleased(event -> loadEntriesWithFilter(searchTextField.getText()));
+
+		//Determines which tab is open by default
+		currentTabId = allTab.getId();
+
+		//Loads images in background
+		new Thread(new ImageLoader(service.getEntries())).start();
+
+		//Filters and displays entries
+		service.getEntries().forEach(entry -> entry.setOnMouseClicked(showDetailsHandler));
 		displayedEntries = FXCollections.observableArrayList(service.getEntries());
-		displayedEntries.forEach(entry -> entry.setOnMouseClicked(showDetailsHandler));
+		loadEntriesWithFilter(null);
 		entriesView.setItems(displayedEntries);
 
 		selectedEntry = displayedEntries.get(0);
@@ -138,11 +172,11 @@ public class MainViewController
 	{
 		if (selectedEntry != null)
 		{
-			seriesTitleLabel.setText(selectedEntry.getSeriesTitle());
+			seriesTitleLabel.setText(selectedEntry.getTitle());
 			myScoreBox.getSelectionModel().select(selectedEntry.getMyScore());
 			episodeSpinner.getEditor().setText(Integer.toString(selectedEntry.getMyWatchedEpisodes()));
 			mySeriesStatusBox.getSelectionModel().select(selectedEntry.getMyStatus());
-			seriesImageView.setImage(selectedEntry.getSeriesImage());
+			seriesImageView.setImage(selectedEntry.getImage());
 
 			if (selectedEntry.getMyStatus() == MyStatusEnum.COMPLETED)
 				episodeSpinner.setDisable(true);
@@ -261,7 +295,7 @@ public class MainViewController
 			return;
 
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setHeaderText("Deleting " + selectedEntry.getSeriesTitle() + " from list");
+		alert.setHeaderText("Deleting " + selectedEntry.getTitle() + " from list");
 		alert.setContentText("Are you sure?");
 		alert.setTitle("Confirm");
 
@@ -273,7 +307,7 @@ public class MainViewController
 
 		if (alert.getResult().getButtonData().isDefaultButton())
 		{
-			Task<Boolean> deleteEntryTask = service.deleteEntryFromMAL(selectedEntry.getSeriesDataBaseID());
+			Task<Boolean> deleteEntryTask = service.deleteEntryFromMAL(selectedEntry.getDatabaseId());
 
 			deleteEntryTask.setOnSucceeded(workerState ->
 			{
@@ -306,7 +340,7 @@ public class MainViewController
 	{
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Set custom website");
-		dialog.setHeaderText("Set custom website for " + selectedEntry.getSeriesTitle());
+		dialog.setHeaderText("Set custom website for " + selectedEntry.getTitle());
 
 		DialogPane alertPane = dialog.getDialogPane();
 		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
@@ -336,14 +370,17 @@ public class MainViewController
 		if (!tabId.equals(currentTabId) && service != null)
 		{
 			currentTabId = tabId;
-			loadEntriesWithFilter();
+			loadEntriesWithFilter(null);
 		}
 	}
 
 	/**
-	 * Adjust currently showing entries in entriesView to match currently selected tab
+	 * Adjust currently showing entries in entriesView to match currently selected tab and to match filter
+	 * in searchTextField (if any)
+	 *
+	 * @param titleFilter additional filter to series title (can be null to display all entries)
 	 */
-	private void loadEntriesWithFilter()
+	private void loadEntriesWithFilter(String titleFilter)
 	{
 		displayedEntries.clear();
 
@@ -405,10 +442,29 @@ public class MainViewController
 				break;
 			}
 		}
+
+		if(titleFilter != null)
+			displayedEntries.removeIf(listEntry -> !listEntry.getTitle().toLowerCase().contains(titleFilter.toLowerCase()));
+
 		if (displayedEntries.size() > 0)
 		{
 			selectedEntry = displayedEntries.get(0);
 			updateEntryDetails();
+		}
+	}
+
+	private void showSearchBar()
+	{
+		if(searchTextField.isVisible())
+		{
+			topHBox.getChildren().remove(searchTextField);
+			searchTextField.setVisible(false);
+		}
+		else
+		{
+			topHBox.getChildren().add(searchTextField);
+			searchTextField.setVisible(true);
+			searchTextField.requestFocus();
 		}
 	}
 

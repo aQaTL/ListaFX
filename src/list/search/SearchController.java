@@ -17,7 +17,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.web.WebView;
+import javax.xml.stream.XMLStreamException;
 import list.DataService;
+import list.ImageLoader;
 import list.entry.Entry;
 import list.entry.EntryEventHandler;
 import list.entry.ListEntry;
@@ -29,6 +31,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -72,7 +75,7 @@ public class SearchController
 	@FXML
 	Rating score;
 	@FXML
-	private Label seriesStart, seriesEnd, statusLabel;
+	private Label seriesStartDate, seriesEndDate, statusLabel;
 	@FXML
 	private WebView synopsis;
 	@FXML
@@ -89,7 +92,7 @@ public class SearchController
 		this.entryEventHandler = entryEventHandler;
 		searchService = new SearchService();
 
-		addButtonEvent = entry -> showDetails(entry);
+		addButtonEvent = this::showDetails;
 
 		searchService.setOnRunning(event -> progressBar.setVisible(true));
 		searchService.setOnSucceeded((serviceState) ->
@@ -101,13 +104,14 @@ public class SearchController
 		{
 			Throwable e = serviceState.getSource().getException();
 			if (e instanceof SocketTimeoutException)
-			{
 				searchService.restart();
+			else if(e instanceof XMLStreamException) //Invoked new search or nothing was found
+			{
+				progressBar.setVisible(false);
+				displayedResults.clear();
 			}
 			else
-			{
 				e.printStackTrace();
-			}
 		});
 
 		filterBox.getItems().setAll(SeriesTypeEnum.values());
@@ -151,6 +155,8 @@ public class SearchController
 		}
 		results = searchedEntries;
 
+		new Thread(new ImageLoader(Arrays.asList(results))).start();
+
 		displayedResults.clear();
 		filterResults();
 	}
@@ -192,8 +198,8 @@ public class SearchController
 		episodesLabel.setText(Integer.toString(selectedEntry.getEpisodes()));
 		seriesImage.setImage(selectedEntry.getImage());
 		score.setRating(selectedEntry.getScore());
-		seriesStart.setText(selectedEntry.getStartDate());
-		seriesEnd.setText(selectedEntry.getEndDate());
+		seriesStartDate.setText(selectedEntry.getStartDate());
+		seriesEndDate.setText(selectedEntry.getEndDate());
 		statusLabel.setText(selectedEntry.getStatus());
 		synopsis.getEngine().loadContent(selectedEntry.getSynopsis());
 	}
@@ -206,15 +212,15 @@ public class SearchController
 	{
 		displayedResults.clear();
 
-		if(selectedFilters.size() == 0)
+		if (selectedFilters.size() == 0)
 		{
 			displayedResults.addAll(results);
 			return;
 		}
 
-		for(SearchedEntry entry : results)
+		for (SearchedEntry entry : results)
 		{
-			if(selectedFilters.contains(entry.getType()))
+			if (selectedFilters.contains(entry.getSeriesType()))
 				displayedResults.add(entry);
 		}
 	}
@@ -244,6 +250,7 @@ public class SearchController
 				e.printStackTrace();
 			}
 		});
+		addEntryTask.setOnFailed(workerState ->	addEntryTask.getException().printStackTrace());
 
 		new Thread(addEntryTask).start();
 	}
