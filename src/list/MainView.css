@@ -124,6 +124,13 @@
 	-fx-border-color: transparent;
 	-fx-background-color: transparent;
 }
+.text-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: aliceblue;
+	-fx-background-color: #616161;
+	-fx-border-color: crimson crimson crimson crimson;
+}
 .spinner .text-field
 {
 	-fx-text-fill: #FC804E;
