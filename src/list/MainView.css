@@ -46,6 +46,14 @@
 {
 	-fx-background-color: linear-gradient(to bottom, saddlebrown, tomato);
 }
+.tab:selected:top
+{
+	-fx-background-color: linear-gradient(to bottom, tomato, #F24805);
+}
+.tab:top .tab-container .focus-indicator
+{
+	-fx-border-color: transparent;
+}
 .tab:top .tab-container .tab-label
 {
 	-fx-text-fill: aliceblue;
