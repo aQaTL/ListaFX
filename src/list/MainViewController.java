@@ -384,64 +384,17 @@ public class MainViewController
 	{
 		displayedEntries.clear();
 
-		switch (currentTabId)
+		if(!currentTabId.equals(allTab.getId()))
 		{
-			case "allTab":
+			MyStatusEnum selectedTab = MyStatusEnum.valueOf(currentTabId.substring(0, currentTabId.length() - 3).toUpperCase());
+			service.getEntries().forEach(entry ->
 			{
-				displayedEntries.addAll(service.getEntries());
-				break;
-			}
-			case "watchingTab":
-			{
-				service.getEntries().forEach(entry ->
-				{
-					if (entry.getMyStatus() == MyStatusEnum.WATCHING)
-						displayedEntries.add(entry);
-				});
-
-				break;
-			}
-			case "completedTab":
-			{
-				service.getEntries().forEach(entry ->
-				{
-					if (entry.getMyStatus() == MyStatusEnum.COMPLETED)
-						displayedEntries.add(entry);
-				});
-
-				break;
-			}
-			case "onHoldTab":
-			{
-				service.getEntries().forEach(entry ->
-				{
-					if (entry.getMyStatus() == MyStatusEnum.ONHOLD)
-						displayedEntries.add(entry);
-				});
-
-				break;
-			}
-			case "droppedTab":
-			{
-				service.getEntries().forEach(entry ->
-				{
-					if (entry.getMyStatus() == MyStatusEnum.DROPPED)
-						displayedEntries.add(entry);
-				});
-
-				break;
-			}
-			case "planToWatchTab":
-			{
-				service.getEntries().forEach(entry ->
-				{
-					if (entry.getMyStatus() == MyStatusEnum.PLANTOWATCH)
-						displayedEntries.add(entry);
-				});
-
-				break;
-			}
+				if(entry.getMyStatus() == selectedTab)
+					displayedEntries.add(entry);
+			});
 		}
+		else
+			displayedEntries.setAll(service.getEntries());
 
 		if(titleFilter != null)
 			displayedEntries.removeIf(listEntry -> !listEntry.getTitle().toLowerCase().contains(titleFilter.toLowerCase()));
