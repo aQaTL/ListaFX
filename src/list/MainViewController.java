@@ -40,6 +40,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Represents application main window
@@ -128,7 +131,7 @@ public class MainViewController
 		EventHandler<KeyEvent> searchBarKeyEvent = (keyEvent ->
 		{
 			if (keyEvent.getCode() == KeyCode.F3)
-				showSearchBar();
+				toggleSearchBar();
 		});
 		rootPane.setOnKeyPressed(searchBarKeyEvent);
 		searchTextField.setOnKeyPressed(searchBarKeyEvent);
@@ -204,6 +207,7 @@ public class MainViewController
 				if (task.get())
 				{
 					selectedEntry.initView(); //Just updates it
+					loadEntriesWithFilter(searchTextField.getText());
 					notify.text(notifyUpdateMsg).showInformation();
 				}
 			}
@@ -316,7 +320,17 @@ public class MainViewController
 					if (deleteEntryTask.get())
 					{
 						service.getEntries().remove(selectedEntry);
-						entriesView.getItems().remove(selectedEntry);
+						displayedEntries.remove(selectedEntry);
+
+						if(displayedEntries.size() > 0)
+						{
+							selectedEntry = displayedEntries.get(0);
+							updateEntryDetails();
+						}
+						else
+						{
+							masterDetailPane.setShowDetailNode(false);
+						}
 
 						notify.text(notifyDeleteMsg).showInformation();
 					}
@@ -370,7 +384,7 @@ public class MainViewController
 		if (!tabId.equals(currentTabId) && service != null)
 		{
 			currentTabId = tabId;
-			loadEntriesWithFilter(null);
+			loadEntriesWithFilter(searchTextField.getText());
 		}
 	}
 
@@ -399,14 +413,18 @@ public class MainViewController
 		if(titleFilter != null)
 			displayedEntries.removeIf(listEntry -> !listEntry.getTitle().toLowerCase().contains(titleFilter.toLowerCase()));
 
-		if (displayedEntries.size() > 0)
+		if (displayedEntries.size() > 0 && !displayedEntries.contains(selectedEntry))
 		{
 			selectedEntry = displayedEntries.get(0);
 			updateEntryDetails();
 		}
+		else if (displayedEntries.size() == 0)
+		{
+			masterDetailPane.setShowDetailNode(false);
+		}
 	}
 
-	private void showSearchBar()
+	private void toggleSearchBar()
 	{
 		if(searchTextField.isVisible())
 		{
