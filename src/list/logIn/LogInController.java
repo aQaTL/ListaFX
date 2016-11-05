@@ -16,11 +16,13 @@ import javafx.stage.WindowEvent;
 import javax.xml.stream.XMLStreamException;
 import list.DataService;
 import list.MainViewController;
+import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Map;
 
 /**
  * Created by Maciej on 2016-05-07.
@@ -148,7 +150,7 @@ public class LogInController
 					String userCredentials = usernameField.getText() + ":" + userPasswordField.getText();
 					String encodedLogin = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userCredentials.getBytes());
 
-					Jsoup.connect("http://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
+					Jsoup.connect("https://myanimelist.net/api/account/verify_credentials.xml").header("Authorization", encodedLogin).get();
 
 					return new DataService(encodedLogin, usernameField.getText());
 				}

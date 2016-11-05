@@ -40,9 +40,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Represents application main window
@@ -56,6 +55,8 @@ public class MainViewController
 
 	private ObservableList<ListEntry> displayedEntries;
 	private ListEntry selectedEntry;
+
+	private ExecutorService helperThread;
 
 	private String notifyAddMsg = "Entry has been added";
 	private String notifyDeleteMsg = "Entry has been deleted";
@@ -95,6 +96,7 @@ public class MainViewController
 	public void init(DataService service)
 	{
 		this.service = service;
+		this.helperThread = Executors.newSingleThreadExecutor();
 
 		//Initializes notifications
 		notify = Notifications.create()
@@ -216,6 +218,7 @@ public class MainViewController
 				e.printStackTrace();
 			}
 		});
+		task.setOnFailed(workerState -> task.getException().printStackTrace());
 		new Thread(task).start();
 	}
 
@@ -225,19 +228,23 @@ public class MainViewController
 	@FXML
 	private void openWebsite()
 	{
-		try
+		//For some strange reason, browse() method can sometimes cause total app freeze if you execute it in FXThread
+		helperThread.submit(() ->
 		{
-			Desktop.getDesktop().browse(selectedEntry.getWebsite().toURI());
-		}
-		catch (IOException | URISyntaxException e)
-		{
-			System.err.println("Website couldn't be opened!");
+			try
+			{
+				Desktop.getDesktop().browse(selectedEntry.getWebsite().toURI());
+			}
+			catch (IOException | URISyntaxException e)
+			{
+				System.err.println("Website couldn't be opened!");
 
-			Alert error = new Alert(Alert.AlertType.ERROR);
-			error.setHeaderText(null);
-			error.setContentText("Website couldn't be opened! Check address.");
-			error.showAndWait();
-		}
+				Alert error = new Alert(Alert.AlertType.ERROR);
+				error.setHeaderText(null);
+				error.setContentText("Website couldn't be opened! Check address.");
+				error.showAndWait();
+			}
+		});
 	}
 
 	@FXML
@@ -322,7 +329,7 @@ public class MainViewController
 						service.getEntries().remove(selectedEntry);
 						displayedEntries.remove(selectedEntry);
 
-						if(displayedEntries.size() > 0)
+						if (displayedEntries.size() > 0)
 						{
 							selectedEntry = displayedEntries.get(0);
 							updateEntryDetails();
@@ -398,19 +405,19 @@ public class MainViewController
 	{
 		displayedEntries.clear();
 
-		if(!currentTabId.equals(allTab.getId()))
+		if (!currentTabId.equals(allTab.getId()))
 		{
 			MyStatusEnum selectedTab = MyStatusEnum.valueOf(currentTabId.substring(0, currentTabId.length() - 3).toUpperCase());
 			service.getEntries().forEach(entry ->
 			{
-				if(entry.getMyStatus() == selectedTab)
+				if (entry.getMyStatus() == selectedTab)
 					displayedEntries.add(entry);
 			});
 		}
 		else
 			displayedEntries.setAll(service.getEntries());
 
-		if(titleFilter != null)
+		if (titleFilter != null)
 			displayedEntries.removeIf(listEntry -> !listEntry.getTitle().toLowerCase().contains(titleFilter.toLowerCase()));
 
 		if (displayedEntries.size() > 0 && !displayedEntries.contains(selectedEntry))
@@ -426,7 +433,7 @@ public class MainViewController
 
 	private void toggleSearchBar()
 	{
-		if(searchTextField.isVisible())
+		if (searchTextField.isVisible())
 		{
 			topHBox.getChildren().remove(searchTextField);
 			searchTextField.setVisible(false);

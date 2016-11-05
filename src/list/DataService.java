@@ -1,9 +1,6 @@
 package list;
 
 import javafx.concurrent.Task;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.xml.stream.XMLStreamException;
 import list.entry.Entry;
 import list.entry.EntryXMLDataBuilder;
@@ -13,16 +10,15 @@ import list.entry.data.MyScoreEnum;
 import list.entry.data.MyStatusEnum;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * DataService object represents logged user account. This class provides basic operations on user MAL:
@@ -36,8 +32,9 @@ import java.util.concurrent.Future;
 public class DataService
 {
 	private String encodedLogin;
+	private Map<String, String> cookies;
 
-	public static String malAddress = "http://myanimelist.net/";
+	public static final String MAL_ADDRESS = "https://myanimelist.net/";
 
 	public static final int PARSER_THREADS = 4;
 
@@ -59,26 +56,32 @@ public class DataService
 		this.encodedLogin = encodedLogin;
 		parserThreadPool = Executors.newFixedThreadPool(PARSER_THREADS);
 
-		String userListAddress = "http://myanimelist.net/malappinfo.php?u=" + username + "&status=all&type=anime";
+		String userListAddress = MAL_ADDRESS + "malappinfo.php?u=" + username + "&status=all&type=anime";
 
 		customURLs = loadCustomWebsites();
 
 		System.out.println("Parsing...");
 		long startTime = System.currentTimeMillis();
 
-		try (InputStream url = new URL(userListAddress).openStream())
+		try (InputStream input = new URL(userListAddress).openStream())
 		{
-			entries = MALParser.parseToListEntryList(url);
+			entries = MALParser.parseToListEntryList(input);
 		}
 
 		//Loads local custom websites
 		entries.forEach(entry ->
 		{
-			if(customURLs.containsKey(entry.getDatabaseId()))
+			if (customURLs.containsKey(entry.getDatabaseId()))
 				entry.setWebsite(customURLs.get(entry.getDatabaseId()));
 		});
 
 		System.out.println("Parsing ended. Time " + (System.currentTimeMillis() - startTime));
+	}
+
+	public DataService(String encodedLogin, String username, Map<String, String> cookies) throws IOException, XMLStreamException
+	{
+		this(encodedLogin, username);
+		this.cookies = cookies;
 	}
 
 	public List<ListEntry> getEntries()
@@ -99,7 +102,7 @@ public class DataService
 			@Override
 			protected SearchedEntry[] call() throws Exception
 			{
-				String address = malAddress + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
+				String address = MAL_ADDRESS + "api/anime/search.xml?q=" + seriesTitle.replaceAll(" ", "+").toLowerCase();
 
 				HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 				connection.setDoOutput(true);
@@ -128,7 +131,7 @@ public class DataService
 			@Override
 			protected ListEntry call() throws Exception
 			{
-				String address = "http://myanimelist.net/api/animelist/add/" + entry.getDatabaseId() + ".xml";
+				String address = MAL_ADDRESS + "api/animelist/add/" + entry.getDatabaseId() + ".xml";
 
 				StringBuilder xmlData = new EntryXMLDataBuilder()
 						.addEpisode(initEpisode)
@@ -136,7 +139,10 @@ public class DataService
 						.addScore(MyScoreEnum.NOT_RATED_YET)
 						.build();
 
-				Document addAnimeDocument = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
+				Document addAnimeDocument = Jsoup.connect(address)
+						.data("data", xmlData.toString())
+						.header("Authorization", encodedLogin)
+						.post();
 
 				if (addAnimeDocument.title().contains("Created"))
 					return Entry.convertToListEntry(entry);
@@ -159,7 +165,7 @@ public class DataService
 			@Override
 			protected Boolean call() throws Exception
 			{
-				String address = malAddress + "api/animelist/delete/" + id + ".xml";
+				String address = MAL_ADDRESS + "api/animelist/delete/" + id + ".xml";
 				Document response = Jsoup.connect(address).header("Authorization", encodedLogin).get();
 
 				if (response.body().ownText().equals("Deleted"))
@@ -183,7 +189,7 @@ public class DataService
 			@Override
 			public Boolean call() throws IOException
 			{
-				String address = malAddress + "api/animelist/update/" + entry.getDatabaseId() + ".xml";
+				String address = MAL_ADDRESS + "api/animelist/update/" + entry.getDatabaseId() + ".xml";
 
 				StringBuilder xmlData = new EntryXMLDataBuilder()
 						.addEpisode(entry.getMyWatchedEpisodes())
@@ -191,8 +197,11 @@ public class DataService
 						.addScore(entry.getMyScore())
 						.build();
 
-				Document response = Jsoup.connect(address).data("data", xmlData.toString()).header("Authorization", encodedLogin).post();
-
+				Document response = Jsoup.connect(address)
+						.data("data", xmlData.toString())
+//						.cookies(cookies) //Shit, still not working
+						.header("Authorization", encodedLogin)
+						.post();
 				if (response.body().ownText().equals("Updated"))
 					return true;
 
@@ -250,37 +259,4 @@ public class DataService
 		storeCustomWebsites();
 	}
 
-	public void storePassword() //TODO
-	{
-		try
-		{
-			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-			SecretKey aesKey = keyGenerator.generateKey();
-
-			Cipher aesCipher = Cipher.getInstance("AES");
-			aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
-
-			byte[] loginToStore = encodedLogin.getBytes();
-
-			byte[] encodedLogin = aesCipher.doFinal(loginToStore);
-
-			aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
-			byte[] decryptedLogin = aesCipher.doFinal(encodedLogin);
-
-			System.out.println("Comparing logins...");
-			System.out.println(loginToStore);
-			System.out.println(decryptedLogin);
-
-		}
-		catch (GeneralSecurityException e)
-		{
-			System.err.println("Couldn't save your password!");
-			e.printStackTrace();
-		}
-	}
-
-	private String loadCredentials()
-	{
-		return null;
-	}
 }
