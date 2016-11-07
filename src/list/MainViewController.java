@@ -143,7 +143,7 @@ public class MainViewController
 		currentTabId = allTab.getId();
 
 		//Loads images in background
-		new Thread(new ImageLoader(service.getEntries())).start();
+		helperThread.submit(new ImageLoader(service.getEntries()));
 
 		//Filters and displays entries
 		service.getEntries().forEach(entry -> entry.setOnMouseClicked(showDetailsHandler));
@@ -219,7 +219,7 @@ public class MainViewController
 			}
 		});
 		task.setOnFailed(workerState -> task.getException().printStackTrace());
-		new Thread(task).start();
+		helperThread.submit(task);
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class MainViewController
 				}
 			});
 
-			new Thread(deleteEntryTask).start();
+			helperThread.submit(deleteEntryTask);
 		}
 	}
 
