@@ -33,3 +33,12 @@
 	-fx-border-color: crimson crimson crimson crimson;
 	-fx-border-radius: 15;
 }
+.hyperlink:armed
+{
+	-fx-border-color: transparent transparent transparent transparent;
+}
+.hyperlink:visited
+{
+	-fx-text-fill: deepskyblue;
+	-fx-border-color: transparent transparent transparent transparent;
+}

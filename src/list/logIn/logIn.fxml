@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressBar?>
@@ -23,6 +24,14 @@
             <Insets left="100.0" right="100.0" top="20.0" />
          </VBox.margin>
       </PasswordField>
+      <Hyperlink fx:id="signUpLink" onMouseClicked="#openSignUpPage" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefWidth="1.7976931348623157E308" text="Sign Up" textAlignment="RIGHT">
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+         <VBox.margin>
+            <Insets left="50.0" right="100.0" />
+         </VBox.margin>
+      </Hyperlink>
       <Separator layoutX="10.0" layoutY="161.0" prefHeight="37.0" prefWidth="600.0" />
       <ProgressBar fx:id="progressBar" prefHeight="24.0" prefWidth="400.0" visible="false" />
    </children>

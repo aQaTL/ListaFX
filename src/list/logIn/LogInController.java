@@ -9,8 +9,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.xml.stream.XMLStreamException;
@@ -20,9 +23,12 @@ import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Maciej on 2016-05-07.
@@ -35,10 +41,14 @@ public class LogInController
 	private LogInService logInService;
 	private DataService service;
 
+	private final URI SIGN_UP_ADDR = URI.create(DataService.MAL_ADDRESS + "register.php");
+
 	@FXML
 	TextField usernameField;
 	@FXML
 	PasswordField userPasswordField;
+	@FXML
+	Hyperlink signUpLink;
 	@FXML
 	Label errorLabel;
 	@FXML
@@ -106,6 +116,24 @@ public class LogInController
 		}
 	}
 
+	/**
+	 * Opens MAL sign up page in default browser
+	 */
+	@FXML
+	private void openSignUpPage(MouseEvent event)
+	{
+		new Thread(() ->
+		{
+			try
+			{
+				Desktop.getDesktop().browse(SIGN_UP_ADDR);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}).start();
+	}
 
 	/**
 	 * Shows exit confirmation dialog;
