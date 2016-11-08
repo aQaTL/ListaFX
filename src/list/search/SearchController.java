@@ -105,7 +105,7 @@ public class SearchController
 			Throwable e = serviceState.getSource().getException();
 			if (e instanceof SocketTimeoutException)
 				searchService.restart();
-			else if(e instanceof XMLStreamException) //Invoked new search or nothing was found
+			else if (e instanceof XMLStreamException) //Invoked new search or nothing was found
 			{
 				progressBar.setVisible(false);
 				displayedResults.clear();
@@ -213,16 +213,9 @@ public class SearchController
 		displayedResults.clear();
 
 		if (selectedFilters.size() == 0)
-		{
 			displayedResults.addAll(results);
-			return;
-		}
-
-		for (SearchedEntry entry : results)
-		{
-			if (selectedFilters.contains(entry.getSeriesType()))
-				displayedResults.add(entry);
-		}
+		else
+			Arrays.stream(results).filter(result -> selectedFilters.contains(result.getSeriesType())).forEach(displayedResults::add);
 	}
 
 	/**
@@ -250,7 +243,7 @@ public class SearchController
 				e.printStackTrace();
 			}
 		});
-		addEntryTask.setOnFailed(workerState ->	addEntryTask.getException().printStackTrace());
+		addEntryTask.setOnFailed(workerState -> addEntryTask.getException().printStackTrace());
 
 		new Thread(addEntryTask).start();
 	}
