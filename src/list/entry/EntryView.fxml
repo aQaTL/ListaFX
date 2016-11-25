@@ -30,7 +30,7 @@
 		</FlowPane>
 		<FlowPane alignment="TOP_CENTER" prefHeight="18.0" prefWidth="237.0">
 			<children>
-				<Label prefHeight="21.0" prefWidth="40.0" text="Score"/>
+				<Label fx:id="typeOrScoreLabel" prefHeight="21.0" prefWidth="40.0" text="Score"/>
 				<TextField fx:id="typeOrScoreField" editable="false" prefHeight="31.0" prefWidth="117.0"/>
 			</children>
 		</FlowPane>

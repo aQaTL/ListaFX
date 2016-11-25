@@ -52,6 +52,7 @@ public final class SearchedEntry extends Entry
 	@Override
 	protected void initView()
 	{
+		typeOrScoreLabel.setText("Type");
 		titleLabel.setText(getTitle());
 		imageView.setImage(getImage());
 		episodesField.setText(Integer.toString(getEpisodes()));

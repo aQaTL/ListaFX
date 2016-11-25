@@ -54,6 +54,8 @@ public abstract class Entry
 	@FXML
 	protected TextField episodesField;
 	@FXML
+	protected Label typeOrScoreLabel;
+	@FXML
 	protected TextField typeOrScoreField;
 	@FXML
 	protected Button detailsButton;
