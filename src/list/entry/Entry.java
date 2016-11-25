@@ -113,6 +113,7 @@ public abstract class Entry
 		{
 			VBox vbox = loader.load();
 			loader.<Entry>getController().initView();
+			typeOrScoreField.setText("Type");
 			return vbox;
 		}
 		catch (IOException e)
