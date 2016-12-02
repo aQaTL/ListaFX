@@ -1,0 +1,414 @@
+.root
+{
+	-fx-background-color: #383838;
+}
+.menu-bar
+{
+	-fx-background-color: linear-gradient(to bottom, #FA4C2D, #C43939);
+}
+.menu:hover
+{
+	-fx-background-color: saddlebrown;
+}
+.menu-bar .container .menu:openvertically .label
+{
+	-fx-text-fill: aliceblue;
+}
+.menu:focused:showing, .menu:hover:showing, .menu:focused, .menu:showing
+{
+	-fx-background-color: saddlebrown;
+}
+.context-menu
+{
+	-fx-skin: "com.sun.javafx.scene.control.skin.ContextMenuSkin";
+	-fx-background-color: #595959;
+	-fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+	-fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em;
+}
+.menu-item
+{
+	-fx-background-color: #595959;
+}
+.menu-item:focused
+{
+	-fx-background-color: firebrick;
+}
+.tab-pane:top .tab-header-area .tab-header-background
+{
+	-fx-background-color: linear-gradient(to bottom, #C43939, #AB2727);
+}
+.tab:top
+{
+	-fx-background-color: linear-gradient(to bottom, saddlebrown, tomato);
+}
+.tab:selected:top
+{
+	-fx-background-color: linear-gradient(to bottom, tomato, #F24805);
+}
+.tab:top .tab-container .focus-indicator
+{
+	-fx-border-color: transparent;
+}
+.tab:top .tab-container .tab-label
+{
+	-fx-text-fill: aliceblue;
+}
+.scroll-pane
+{
+	-fx-background-color: #383838;
+}
+.grid-view
+{
+	-fx-background-color: #383838;
+	-fx-border-color: #383838;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.grid-view .virtual-flow .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
+.label
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: tomato;
+}
+.list-view
+{
+	-fx-background-color: #383838;
+	-fx-font-size: 12pt;
+}
+.list-cell
+{
+	-fx-background-color: #454545;
+	-fx-text-fill: #FC804E;
+}
+.list-view:focused .list-cell:focused
+{
+	-fx-background-color: tomato, black, firebrick;
+	-fx-text-fill: #FFFACD;
+}
+.list-cell:odd
+{
+	-fx-background-color: #696969;
+}
+.list-view .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.list-view .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.list-view .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
+.split-pane
+{
+	-fx-background-color: #383838;
+}
+.split-pane *.split-pane-divider
+{
+	-fx-background-color: #ED3D37;
+}
+.separator:horizontal .line
+{
+	-fx-border-color: transparent transparent transparent transparent;
+}
+.choice-box
+{
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 12;
+}
+.choice-box .label
+{
+	-fx-text-fill: #FC804E;
+}
+.choice-box .open-button .arrow
+{
+	-fx-background-color: crimson;
+}
+.spinner:focused
+{
+	-fx-border-color: transparent;
+	-fx-background-color: transparent;
+}
+.text-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: firebrick;
+	-fx-background-color: darkgray;
+	-fx-background-radius: 10;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 10;
+}
+.spinner .text-field
+{
+	-fx-text-fill: #FC804E;
+	-fx-background-color: #383838;
+	-fx-background-radius: 0;
+	-fx-border-color: tomato;
+	-fx-border-radius: 12;
+}
+.spinner .text-field:disabled
+{
+	-fx-text-fill: #FC804E;
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 12;
+}
+.spinner .increment-arrow-button
+{
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 5;
+}
+.spinner .increment-arrow-button .increment-arrow
+{
+	-fx-background-color: crimson;
+}
+.spinner .decrement-arrow-button
+{
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 5;
+}
+.spinner .decrement-arrow-button .decrement-arrow
+{
+	-fx-background-color: crimson;
+}
+.progress-bar
+{
+	-fx-indeterminate-bar-animation-time: 1;
+}
+.progress-bar:indeterminate .bar
+{
+	-fx-background-color: linear-gradient(to left, transparent, crimson);
+}
+.progress-bar .track
+{
+	-fx-background-color: #616161;
+}
+.combo-box .arrow-button
+{
+	-fx-background-color: #383838;
+	-fx-border-color: tomato;
+	-fx-border-radius: 5;
+}
+.web-view .scroll-bar:vertical .track
+{
+	-fx-background-color: #313131;
+}
+.web-view .scroll-bar:vertical .track-background
+{
+	-fx-background-color: #313131;
+}
+.web-view .scroll-bar:vertical .thumb
+{
+	-fx-background-color: linear-gradient(to bottom, crimson, firebrick);
+}
+.clearable-field
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: aliceblue;
+	-fx-background-color: #616161;
+	-fx-background-radius: 0;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 0;
+}
+.button
+{
+	-fx-background-color: tomato;
+	-fx-background-radius: 12;
+	-fx-border-color: orangered;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+.button:hover
+{
+	-fx-background-color: #FF8670;
+}
+.button:armed
+{
+	-fx-background-color: #F25A3F;
+}
+.hyperlink:armed
+{
+	-fx-border-color: transparent transparent transparent transparent;
+}
+.hyperlink:visited
+{
+	-fx-text-fill: deepskyblue;
+	-fx-border-color: transparent transparent transparent transparent;
+}
+/*
+ * Dialog
+ */
+.myAlert
+{
+	-fx-background-color: #313131;
+}
+.myAlert > *.button-bar > *.container
+{
+	-fx-background-color: #313131;
+}
+.myAlert > *.label.content
+{
+	-fx-font-size: 15px;
+	-fx-font-weight: bold;
+	-fx-text-fill: tomato;
+}
+.myAlert:header *.header-panel
+{
+	-fx-background-color: #616161;
+}
+.myAlert:header *.header-panel *.label
+{
+	-fx-text-fill: aliceblue;
+}
+.myAlert > *.button-bar > *.container .button
+{
+	-fx-background-color: tomato;
+	-fx-background-radius: 12;
+	-fx-border-color: orangered;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+.myAlert > *.button-bar > *.container .button:hover
+{
+	-fx-background-color: #FF8670;
+}
+.myAlert > *.button-bar > *.container .button:armed
+{
+	-fx-background-color: #F25A3F;
+}
+.myAlert .text-input
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: tomato;
+	-fx-background-color: #616161;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 15;
+}
+/*
+ * MainView
+ */
+#title_label
+{
+	-fx-text-fill: lightsalmon;
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-font-size: 16pt;
+}
+#stat_label
+{
+	-fx-text-fill: tomato;
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-font-size: 13pt;
+}
+#update_button
+{
+	-fx-background-color: firebrick;
+	-fx-background-radius: 10;
+	-fx-border-color: black;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+#update_button:hover
+{
+	-fx-background-color: tomato;
+}
+#update_button:armed
+{
+	-fx-background-color: #A12525;
+}
+#website_button
+{
+	-fx-background-color: darkkhaki;
+	-fx-background-radius: 10;
+	-fx-border-color: darkslategray;
+	-fx-border-radius: 10;
+	-fx-text-fill: black;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+#website_button:hover
+{
+	-fx-background-color: khaki;
+}
+#website_button:armed
+{
+	-fx-background-color: #A6A05B;
+}
+/*
+ * SearchView
+ */
+#searchHBox
+{
+	-fx-background-color: #505050;
+}
+#searchField
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: firebrick;
+	-fx-background-color: darkgray;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 15;
+}
+#filterBox .combo-box .arrow-button .arrow
+{
+	-fx-background-color: crimson;
+}
+#title
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: #FC4242;
+	-fx-font-size: 13pt;
+}
+#addButton
+{
+	-fx-background-color: #FC4242;
+	-fx-background-radius: 12;
+	-fx-border-color: orangered;
+	-fx-border-radius: 10;
+	-fx-text-fill: aliceblue;
+	-fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+#addButton:hover
+{
+	-fx-background-color: #FF8670;
+}
+#addButton:armed
+{
+	-fx-background-color: #F25A3F;
+}
+/*
+ * LogInView
+ */
+#errorLabel
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-font-size: 16pt;
+	-fx-text-fill: #FF423B;
+}
+#userCred
+{
+	-fx-font-family: Segoe UI, sans-serif;
+	-fx-text-fill: aliceblue;
+	-fx-background-color: #616161;
+	-fx-background-radius: 15;
+	-fx-border-color: crimson crimson crimson crimson;
+	-fx-border-radius: 15;
+}

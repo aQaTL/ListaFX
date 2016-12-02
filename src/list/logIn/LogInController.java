@@ -150,7 +150,7 @@ public class LogInController
 		warning.setContentText("Are you sure you want to exit?");
 
 		DialogPane alertPane = warning.getDialogPane();
-		alertPane.getStylesheets().add(MainViewController.class.getResource("Alert.css").toExternalForm());
+		alertPane.getStylesheets().add(mainView.getStylesheets().get(0));
 		alertPane.getStyleClass().add("myAlert");
 
 		warning.showAndWait();

@@ -311,7 +311,7 @@ public class MainViewController
 		alert.setTitle("Confirm");
 
 		DialogPane alertPane = alert.getDialogPane();
-		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
+		alertPane.getStylesheets().add(rootPane.getStylesheets().get(0));
 		alertPane.getStyleClass().add("myAlert");
 
 		alert.showAndWait();
@@ -364,7 +364,7 @@ public class MainViewController
 		dialog.setHeaderText("Set custom website for " + selectedEntry.getTitle());
 
 		DialogPane alertPane = dialog.getDialogPane();
-		alertPane.getStylesheets().add(getClass().getResource("Alert.css").toExternalForm());
+		alertPane.getStylesheets().add(rootPane.getStylesheets().get(0));
 		alertPane.getStyleClass().add("myAlert");
 
 		Optional<String> result = dialog.showAndWait();

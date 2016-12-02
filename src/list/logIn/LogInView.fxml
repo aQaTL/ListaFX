@@ -9,17 +9,17 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" stylesheets="@logIn.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.logIn.LogInController">
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" stylesheets="@../AppStyleSheet.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.logIn.LogInController">
    <children>
 
        <Label fx:id="errorLabel" text="Bad password!" visible="false" />
       <Separator prefHeight="37.0" prefWidth="600.0" />
-      <TextField fx:id="usernameField" onKeyPressed="#logIn" prefHeight="31.0" prefWidth="472.0" promptText="Login">
+      <TextField fx:id="usernameField" id="userCred" onKeyPressed="#logIn" prefHeight="31.0" prefWidth="472.0" promptText="Login">
          <VBox.margin>
             <Insets left="100.0" right="100.0" />
          </VBox.margin>
       </TextField>
-      <PasswordField fx:id="userPasswordField" onKeyPressed="#logIn" promptText="Password">
+      <PasswordField fx:id="userPasswordField" id="userCred" onKeyPressed="#logIn" promptText="Password">
          <VBox.margin>
             <Insets left="100.0" right="100.0" top="20.0" />
          </VBox.margin>

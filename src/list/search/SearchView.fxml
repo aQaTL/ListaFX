@@ -20,10 +20,11 @@
 <?import org.controlsfx.control.Rating?>
 
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="247.0" minWidth="410.0"
-            prefHeight="773.0" prefWidth="1083.0" stylesheets="@SearchView.css" xmlns="http://javafx.com/javafx/8.0.60"
+            prefHeight="773.0" prefWidth="1083.0" stylesheets="@../AppStyleSheet.css" xmlns="http://javafx.com/javafx/8.0.60"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="list.search.SearchController">
 	<top>
-		<HBox alignment="CENTER" prefHeight="43.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
+		<HBox fx:id="searchHBox" alignment="CENTER" prefHeight="43.0" prefWidth="600.0" spacing="10.0"
+		      BorderPane.alignment="CENTER">
 			<children>
 				<TextField fx:id="searchField" onKeyPressed="#search" prefHeight="31.0" prefWidth="356.0"/>
 				<CheckComboBox fx:id="filterBox"/>
