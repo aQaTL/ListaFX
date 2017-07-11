@@ -229,7 +229,7 @@ public class MainViewController
 	private void openWebsite()
 	{
 		//For some strange reason, browse() method can sometimes cause total app freeze if you execute it in FXThread
-		helperThread.submit(() ->
+		new Thread(() ->
 		{
 			try
 			{
@@ -244,7 +244,7 @@ public class MainViewController
 				error.setContentText("Website couldn't be opened! Check address.");
 				error.showAndWait();
 			}
-		});
+		}).run();
 	}
 
 	@FXML
