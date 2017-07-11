@@ -17,7 +17,7 @@ This project is one of the first on which I worked for an extended period of tim
 
 ## Screenshots
 
-I've worked with css files to achieve a black and red design. Other people said that it's ugly. I just wanted to play around with css some day. I don't have a talent for designing an applications UIs.
+I've worked with css files to achieve a black and red design. Other people said that it's ugly. I just wanted to play around with css some day. I don't have a talent for designing UIs.
 
 
 ![login](https://cloud.githubusercontent.com/assets/17130832/22443364/f4f7df84-e73e-11e6-8406-fe13b62fc5c9.png)
