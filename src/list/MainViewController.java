@@ -1,6 +1,7 @@
 package list;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
@@ -39,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -143,7 +145,11 @@ public class MainViewController
 		currentTabId = allTab.getId();
 
 		//Loads images in background
-		helperThread.submit(new ImageLoader(service.getEntries()));
+		CompletableFuture.
+				runAsync(
+					new ImageLoader(service.getEntries()),
+					helperThread).
+				thenRun(() -> seriesImageView.setImage(selectedEntry.getImage()));
 
 		//Filters and displays entries
 		service.getEntries().forEach(entry -> entry.setOnMouseClicked(showDetailsHandler));
