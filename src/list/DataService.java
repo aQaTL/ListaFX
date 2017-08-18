@@ -8,6 +8,7 @@ import list.entry.ListEntry;
 import list.entry.SearchedEntry;
 import list.entry.data.MyScoreEnum;
 import list.entry.data.MyStatusEnum;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -139,15 +140,13 @@ public class DataService
 						.addScore(MyScoreEnum.NOT_RATED_YET)
 						.build();
 
-				Document addAnimeDocument = Jsoup.connect(address)
+				Connection.Response response = Jsoup.connect(address)
 						.data("data", xmlData.toString())
 						.header("Authorization", encodedLogin)
-						.post();
+						.method(Connection.Method.POST)
+						.execute();
 
-				if (addAnimeDocument.title().contains("Created"))
-					return Entry.convertToListEntry(entry);
-
-				return null;
+				return response.statusCode() == 201 ? Entry.convertToListEntry(entry) : null;
 			}
 		};
 	}
